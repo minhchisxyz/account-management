@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "gen-api": "ng-openapi-gen --input ./src/openapi/openapi.json --output ./src/app/api-services",
-    "deploy": "ng build --configuration=production && move \"C:\\Users\\diepm\\OneDrive\\Desktop\\git\\account-management\\konto-verwaltung-ui\\dist\\konto-verwaltung-ui\\browser\" \"C:\\Users\\diepm\\OneDrive\\Desktop\\git\\account-management\\konto-verwaltung\\src\\main\\resources\" && rmdir /s /q \"C:\\Users\\diepm\\OneDrive\\Desktop\\git\\account-management\\konto-verwaltung\\src\\main\\resources\\static\" && ren \"C:\\Users\\diepm\\OneDrive\\Desktop\\git\\account-management\\konto-verwaltung\\src\\main\\resources\\browser\" \"static\" && copy \"C:\\Users\\diepm\\OneDrive\\Desktop\\git\\account-management\\konto-verwaltung\\src\\main\\resources\\static\\index.html\" \"C:\\Users\\diepm\\OneDrive\\Desktop\\git\\account-management\\konto-verwaltung\\src\\main\\resources\\static\\404.html\"",
+    "deploy": "ng build --configuration=production",
     "commit-push": "cd .. && git add konto-verwaltung konto-verwaltung-ui && git commit -m \"fix routerLink for year, add tooltip for transactions\" && git push"
   },
   "private": true,
@@ -26,9 +26,12 @@
     "@angular/router": "^17.3.0",
     "@canvasjs/angular-charts": "^1.2.0",
     "@canvasjs/charts": "^3.10.7",
+    "@tailwindcss/postcss": "^4.1.17",
     "bootstrap": "^5.3.3",
     "moment": "^2.30.1",
+    "postcss": "^8.5.6",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^4.1.17",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

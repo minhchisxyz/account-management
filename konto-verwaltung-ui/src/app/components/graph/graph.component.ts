@@ -1,7 +1,7 @@
 import {
-  Component,
+  Component, EventEmitter,
   Input, OnChanges,
-  OnInit,
+  OnInit, Output,
   SimpleChanges,
 } from '@angular/core';
 import {CanvasJSAngularChartsModule} from "@canvasjs/angular-charts";
@@ -12,6 +12,7 @@ import {CurrencyManagementService} from "../../services/currency-service/currenc
 import {FormsModule} from "@angular/forms";
 import {DateService} from "../../services/date-service/date.service";
 import {LoaderComponent} from "../loader/loader.component";
+import {MatInput} from "@angular/material/input";
 
 @Component({
   selector: 'app-graph',
@@ -23,6 +24,7 @@ import {LoaderComponent} from "../loader/loader.component";
     MatSelectModule,
     FormsModule,
     LoaderComponent,
+    MatInput,
   ],
   templateUrl: './graph.component.html',
   styleUrl: './graph.component.scss'
@@ -36,13 +38,13 @@ export class GraphComponent implements OnInit, OnChanges {
   @Input() usingDate: boolean = false
   @Input() vibDataPoints: any[] = []
   @Input() vcbDataPoints: any[] = []
-  @Input() paypalDataPoints: any[] = []
+  @Output() changeRateEvent = new EventEmitter<string>()
   filteredVIBDataPoints: any[] = []
   filteredVCBDataPoints: any[] = []
-  filteredPaypalDataPoints: any[] = []
   input: string = ''
   rate: number = 0
   result: number = 0
+  newRate: string = ''
   loaded: boolean = false
 
   titles: any = {
@@ -79,9 +81,9 @@ export class GraphComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.newRate = ''
     this.filteredVIBDataPoints = this.vibDataPoints
     this.filteredVCBDataPoints = this.vcbDataPoints
-    this.filteredPaypalDataPoints = this.paypalDataPoints
     if (this.currency) this.filter('week')
     else if (this.usingDate) this.init()
     this.prepareData()
@@ -97,15 +99,11 @@ export class GraphComponent implements OnInit, OnChanges {
       label: this.dateService.reformatDate(rate.label),
       y: rate.y
     }))
-    this.filteredPaypalDataPoints = this.paypalDataPoints.map(rate => ({
-      label: this.dateService.reformatDate(rate.label),
-      y: rate.y
-    }))
   }
 
   prepareData() {
     if (this.currency) {
-      this.rate = this.vcbDataPoints[this.vcbDataPoints.length - 1].y
+      this.rate = this.vibDataPoints[this.vcbDataPoints.length - 1].y
       this.result = this.rate
       this.chartOptions = {
         title: {
@@ -138,13 +136,6 @@ export class GraphComponent implements OnInit, OnChanges {
             name: "VCB Rate",
             showInLegend: true,
             dataPoints: this.filteredVCBDataPoints,
-            fontFamily: "sans-serif"
-          },
-          {
-            type: "spline",
-            name: 'Paypal Rate',
-            showInLegend: true,
-            dataPoints: this.filteredPaypalDataPoints,
             fontFamily: "sans-serif"
           }
         ]
@@ -187,10 +178,6 @@ export class GraphComponent implements OnInit, OnChanges {
       this.init()
     } else {
       const begin = this.dateService.getDate(option) || new Date()
-      this.filteredPaypalDataPoints = this.paypalDataPoints.slice().filter(p => new Date(p.label) >= begin).map(rate => ({
-        label: this.dateService.reformatDate(rate.label),
-        y: rate.y
-      }))
       this.filteredVIBDataPoints = this.vibDataPoints.slice().filter(p => new Date(p.label) >= begin).map(rate => ({
         label: this.dateService.reformatDate(rate.label),
         y: rate.y
@@ -218,5 +205,9 @@ export class GraphComponent implements OnInit, OnChanges {
     } catch (error) {
       this.result = this.rate
     }
+  }
+
+  changeRate() {
+    this.changeRateEvent.emit(this.newRate)
   }
 }

@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class Rates {
-    private List<CurrencyExchangeRate> paypalRates;
     private List<CurrencyExchangeRate> vibRates;
     private List<CurrencyExchangeRate> vcbRates;
 }

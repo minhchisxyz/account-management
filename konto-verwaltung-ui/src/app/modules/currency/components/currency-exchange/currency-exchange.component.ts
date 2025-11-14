@@ -18,7 +18,6 @@ import {LoaderComponent} from "../../../../components/loader/loader.component";
 export class CurrencyExchangeComponent implements OnInit{
   title: string = 'Geldwechselsrate von EUR zu VND'
   vibDataPoints: any[] = []
-  paypalDataPoints: any[] = []
   vcbDataPoints: any[] = []
   xTitle: string = 'Datum'
   yTitle: string = 'VND'
@@ -33,10 +32,6 @@ export class CurrencyExchangeComponent implements OnInit{
 
     this.service.getAllRates().subscribe({
       next: value => {
-        this.paypalDataPoints = value.paypalRates!.map(rate => ({
-            label: rate.id!.date,
-            y: rate.rate
-          })) || []
 
         this.vibDataPoints = value.vibRates!.map(rate => ({
           label: rate.id!.date,
@@ -51,5 +46,18 @@ export class CurrencyExchangeComponent implements OnInit{
         this.loaded = true
       }
     })
+  }
+
+  changeRate(rate: string) {
+    if (rate) {
+      let extracts = rate.split(' ')
+      if (extracts.length >= 2) {
+        this.service.changeRate({
+          bank: extracts[0],
+          rate: Number(extracts[1]),
+          date: extracts.length == 2 ? '' : extracts[2]
+        }).subscribe(() => this.ngOnInit());
+      }
+    }
   }
 }

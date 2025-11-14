@@ -6,7 +6,7 @@
 </ng-template>
 
 <div id="container" class="row" *ngIf="currency">
-  <div class="col-4" id="poda">
+  <div class="col-3" id="poda">
     <div class="glow"></div>
     <div class="darkBorderBg"></div>
     <div class="darkBorderBg"></div>
@@ -56,12 +56,18 @@
     </div>
 
   </div>
-  <div class="col-4" id="result">
+  <div class="col-3" id="result">
     <button class="button">
       <div class="button__int">
         <span class="button__span">{{ service.numberInVND(result)  }}</span>
       </div>
     </button>
+  </div>
+  <div class="col-3" id="change-rate">
+    <mat-form-field>
+      <mat-label>Rate ändern</mat-label>
+      <input type="text" matInput [(ngModel)]="newRate" (keyup.enter)="changeRate()" placeholder="vib 27000.123">
+    </mat-form-field>
   </div>
   <div class="col" id="filter">
     <mat-form-field>

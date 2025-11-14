@@ -37,6 +37,23 @@
   </li>
   <li class="nav-item box">
     <a class="nav-link nav-icon nav-nav"
+       matTooltip="Salaries and Savings"
+       [matTooltipPosition]="'after'"
+       href="salaries-and-savings">
+      <mat-icon>attach_money</mat-icon>
+    </a>
+    <div class="space">
+      <span style="--i: 31" class="star"></span>
+      <span style="--i: 12" class="star"></span>
+      <span style="--i: 57" class="star"></span>
+      <span style="--i: 93" class="star"></span>
+      <span style="--i: 23" class="star"></span>
+      <span style="--i: 70" class="star"></span>
+      <span style="--i: 6" class="star"></span>
+    </div>
+  </li>
+  <li class="nav-item box">
+    <a class="nav-link nav-icon nav-nav"
        matTooltip="Neue Transaktion"
        [matTooltipPosition]="'after'"
        (click)="reset()"

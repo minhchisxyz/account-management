@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class TransactionService {
     private final SortTransactionByAscendingDateService transactionSorter;
 
     public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+        return transactionRepository.findAll().stream().sorted(transactionSorter).toList();
     }
 
     public Transaction getTransactionById(Integer id) {
@@ -38,23 +39,15 @@ public class TransactionService {
     }
 
     public Transaction createTransaction(TransactionRequest transaction) {
-        if (transaction.getDate() == null) {
-            return transactionRepository.save(
-                    Transaction.builder()
-                            .value(transaction.getValue())
-                            .date(LocalDate.now())
-                            .description(transaction.getDescription())
-                            .lastModified(LocalDateTime.now()).build()
-            );
-        } else {
-            return transactionRepository.save(
-                    Transaction.builder()
-                            .value(transaction.getValue())
-                            .date(LocalDate.parse(transaction.getDate()))
-                            .description(transaction.getDescription())
-                            .lastModified(LocalDateTime.now()).build()
-            );
-        }
+        LocalDate date = transaction.getDate() == null ? LocalDate.now() : LocalDate.parse(transaction.getDate());
+        String description = transaction.getDescription().toLowerCase().contains("lb") ? "Lebensmittel" : transaction.getDescription();
+        return transactionRepository.save(
+                Transaction.builder()
+                        .value(transaction.getValue())
+                        .date(date)
+                        .description(description)
+                        .lastModified(LocalDateTime.now()).build()
+        );
     }
 
     public Transaction updateTransaction(Integer id, TransactionRequest request) {
@@ -107,6 +100,18 @@ public class TransactionService {
                         .year(y)
                         .total(getAllTransactionsOfYear(y).stream().mapToDouble(Transaction::getValue).sum())
                         .build())
+                .toList();
+    }
+
+    public List<Transaction> getAllSalaries() {
+        return getAllTransactions().stream()
+                .filter(t -> t.getDescription().toLowerCase().contains("gehalt") || t.getDescription().toLowerCase().contains("lohn"))
+                .toList();
+    }
+
+    public List<Transaction> getAllSavings() {
+        return getAllTransactions().stream()
+                .filter(t -> t.getDescription().toLowerCase().contains("me iu") && t.getDescription().toLowerCase().contains("chi ti"))
                 .toList();
     }
 }

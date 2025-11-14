@@ -91,7 +91,7 @@ export class MonthDetailsComponent implements OnInit {
           y: t.value
         }))
 
-        this.title = `Analyse im ${this.month}`
+        this.title = `Analyse im ${this.dateService.getMonthNameDE(this.month)}`
         this.xTitle = 'Datum'
         this.yTitle = '€'
 

@@ -3,10 +3,7 @@ package vn.diepgia.mchis.konto_verwaltung.controllers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.diepgia.mchis.konto_verwaltung.dto.Rates;
 import vn.diepgia.mchis.konto_verwaltung.entities.CurrencyExchangeRate;
 import vn.diepgia.mchis.konto_verwaltung.services.CurrencyRateService;
@@ -19,8 +16,6 @@ public class CurrencyController {
 
     private final CurrencyRateService service;
 
-
-
     @GetMapping("/today")
     public ResponseEntity<CurrencyExchangeRate> getTodayRate(
             @RequestParam("bank") String bank
@@ -32,6 +27,16 @@ public class CurrencyController {
     @GetMapping
     public ResponseEntity<Rates> getAllRates(){
         return ResponseEntity.ok(service.getAllRates());
+    }
+
+    @PostMapping
+    public ResponseEntity<?> changeRate(
+            @RequestParam("bank") String bank,
+            @RequestParam("rate") float rate,
+            @RequestParam("date") String date
+    ) {
+        service.changeRate(bank, rate, date);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -19,6 +19,10 @@ import { getAllMonths } from '../fn/transaction/get-all-months';
 import { GetAllMonths$Params } from '../fn/transaction/get-all-months';
 import { getAllMonthTotals } from '../fn/transaction/get-all-month-totals';
 import { GetAllMonthTotals$Params } from '../fn/transaction/get-all-month-totals';
+import { getAllSalaries } from '../fn/transaction/get-all-salaries';
+import { GetAllSalaries$Params } from '../fn/transaction/get-all-salaries';
+import { getAllSavings } from '../fn/transaction/get-all-savings';
+import { GetAllSavings$Params } from '../fn/transaction/get-all-savings';
 import { getAllTransactionsOfMonth } from '../fn/transaction/get-all-transactions-of-month';
 import { GetAllTransactionsOfMonth$Params } from '../fn/transaction/get-all-transactions-of-month';
 import { getAllTransactionsOfYear } from '../fn/transaction/get-all-transactions-of-year';
@@ -288,6 +292,56 @@ export class TransactionService extends BaseService {
   getAllMonthTotals(params: GetAllMonthTotals$Params, context?: HttpContext): Observable<Array<MonthTotal>> {
     return this.getAllMonthTotals$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<MonthTotal>>): Array<MonthTotal> => r.body)
+    );
+  }
+
+  /** Path part for operation `getAllSavings()` */
+  static readonly GetAllSavingsPath = '/app/AccountManagement/api/v1/transactions/savings';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getAllSavings()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllSavings$Response(params?: GetAllSavings$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Transaction>>> {
+    return getAllSavings(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getAllSavings$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllSavings(params?: GetAllSavings$Params, context?: HttpContext): Observable<Array<Transaction>> {
+    return this.getAllSavings$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Transaction>>): Array<Transaction> => r.body)
+    );
+  }
+
+  /** Path part for operation `getAllSalaries()` */
+  static readonly GetAllSalariesPath = '/app/AccountManagement/api/v1/transactions/salaries';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getAllSalaries()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllSalaries$Response(params?: GetAllSalaries$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Transaction>>> {
+    return getAllSalaries(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getAllSalaries$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllSalaries(params?: GetAllSalaries$Params, context?: HttpContext): Observable<Array<Transaction>> {
+    return this.getAllSalaries$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Transaction>>): Array<Transaction> => r.body)
     );
   }
 

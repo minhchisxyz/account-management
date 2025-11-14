@@ -11,6 +11,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { changeRate } from '../fn/currency/change-rate';
+import { ChangeRate$Params } from '../fn/currency/change-rate';
 import { CurrencyExchangeRate } from '../models/currency-exchange-rate';
 import { getAllRates } from '../fn/currency/get-all-rates';
 import { GetAllRates$Params } from '../fn/currency/get-all-rates';
@@ -46,6 +48,35 @@ export class CurrencyService extends BaseService {
   getAllRates(params?: GetAllRates$Params, context?: HttpContext): Observable<Rates> {
     return this.getAllRates$Response(params, context).pipe(
       map((r: StrictHttpResponse<Rates>): Rates => r.body)
+    );
+  }
+
+  /** Path part for operation `changeRate()` */
+  static readonly ChangeRatePath = '/app/AccountManagement/api/v1/currency';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `changeRate()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  changeRate$Response(params: ChangeRate$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
+    return changeRate(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `changeRate$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  changeRate(params: ChangeRate$Params, context?: HttpContext): Observable<{
+}> {
+    return this.changeRate$Response(params, context).pipe(
+      map((r: StrictHttpResponse<{
+}>): {
+} => r.body)
     );
   }
 

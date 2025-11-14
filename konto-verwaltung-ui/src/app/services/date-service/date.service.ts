@@ -25,7 +25,7 @@ export class DateService {
   private monthNames: any = {
     'January': 'Januar',
     'February': 'Februar',
-    'March': 'Marsch',
+    'March': 'März',
     'April': 'April',
     'May': 'Mai',
     'June': 'Juni',

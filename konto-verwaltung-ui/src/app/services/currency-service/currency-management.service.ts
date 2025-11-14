@@ -31,4 +31,17 @@ export class CurrencyManagementService{
     }
     return sum
   }
+
+  public getRate(): number {
+    if (!this.rate) {
+      this.service.getTodayRate({
+        bank: 'vib'
+      }).subscribe({
+        next: value => {
+          this.rate = value.rate || 1
+        }
+      })
+    }
+    return this.rate
+  }
 }

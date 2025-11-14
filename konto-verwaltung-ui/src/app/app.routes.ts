@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import {AccountBalanceComponent} from "./components/account-balance/account-balance.component";
+import {SalariesSavingsComponent} from "./components/salaries-savings/salaries-savings.component";
 
 export const routes: Routes = [
   {
@@ -13,6 +14,10 @@ export const routes: Routes = [
   {
     path: 'currency',
     loadChildren: () => import('./modules/currency/currency.module').then(m => m.CurrencyModule)
+  },
+  {
+    path: 'salaries-and-savings',
+    component: SalariesSavingsComponent
   },
   {
     path: '**',

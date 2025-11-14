@@ -94,4 +94,14 @@ public class TransactionController {
     ) {
         return ResponseEntity.ok(transactionService.getAllTransactionsOfMonth(year, month));
     }
+
+    @GetMapping("/salaries")
+    public ResponseEntity<List<Transaction>> getAllSalaries() {
+        return ResponseEntity.ok(transactionService.getAllSalaries());
+    }
+
+    @GetMapping("/savings")
+    public ResponseEntity<List<Transaction>> getAllSavings() {
+        return ResponseEntity.ok(transactionService.getAllSavings());
+    }
 }

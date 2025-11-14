@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Builder
@@ -25,5 +25,10 @@ public class Transaction {
     private LocalDate date;
     private LocalDateTime lastModified;
     private String description;
+
+    @Override
+    public String toString() {
+        return String.format("%s,%s,%s", value, date.format(DateTimeFormatter.ISO_DATE), description);
+    }
 
 }

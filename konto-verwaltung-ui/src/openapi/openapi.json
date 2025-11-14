@@ -169,6 +169,71 @@
         }
       }
     },
+    "/app/AccountManagement/api/v1/currency": {
+      "get": {
+        "tags": [
+          "Currency"
+        ],
+        "operationId": "getAllRates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rates"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Currency"
+        ],
+        "operationId": "changeRate",
+        "parameters": [
+          {
+            "name": "bank",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/app/AccountManagement/api/v1/transactions/years": {
       "get": {
         "tags": [
@@ -352,19 +417,45 @@
         }
       }
     },
-    "/app/AccountManagement/api/v1/currency": {
+    "/app/AccountManagement/api/v1/transactions/savings": {
       "get": {
         "tags": [
-          "Currency"
+          "Transaction"
         ],
-        "operationId": "getAllRates",
+        "operationId": "getAllSavings",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Rates"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/AccountManagement/api/v1/transactions/salaries": {
+      "get": {
+        "tags": [
+          "Transaction"
+        ],
+        "operationId": "getAllSalaries",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
                 }
               }
             }
@@ -425,7 +516,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           },
           "value": {
             "type": "number",
