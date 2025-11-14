@@ -1,6 +1,4 @@
 spring:
-  thymeleaf:
-    prefix: classpath:/static/
   profiles:
     active: dev
   servlet:
@@ -10,7 +8,6 @@ springdoc:
   default-produces-media-type: application/json
 application:
   currency:
-    paypal-url: https://www.xoom.com/calculate-fee-table?sourceCountryCode=US&sourceCurrencyCode=EUR&destinationCountryCode=VN&destinationCurrencyCode=VND&sendAmount=100&receiveAmount=26300&localCurrency=true&serviceType=&serviceSlug=&receiveAmountEntered=false&oldSourceCurrencyCode=EUR&oldDestinationCurrencyCode=VND&remittanceResourceID=5f0cae24-2bda-4df3-8ea4-d6d428943d55&_=1729063583541
     vib-url: https://www.vib.com.vn/en/ty-gia/bang-ty-gia
     vcb-url: https://portal.vietcombank.com.vn/Usercontrols/TVPortal.TyGia/pXML.aspx
 
