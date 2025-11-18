@@ -28,7 +28,8 @@ const TransactionSchema = z.object({
     value: z.coerce
         .number(),
     date: z.string(),
-    description: z.string().min(1, { message: "Description is required" })
+    description: z.string().min(1, { message: "Description is required" }),
+    type: z.string()
 });
 
 const months: {
@@ -48,12 +49,56 @@ const months: {
     'december': 12
 }
 
+const reverseMonths: {
+    [key: number]: string
+} = {
+    1: 'january',
+    2: 'february',
+    3: 'march',
+    4: 'april',
+    5: 'may',
+    6: 'june',
+    7: 'july',
+    8: 'august',
+    9: 'september',
+    10: 'october',
+    11: 'november',
+    12: 'december'
+}
+
 const CreateTransactionSchema = TransactionSchema.omit({ id: true })
+const UpdateTransactionSchema = TransactionSchema.omit({ id: true })
+
+export async function updateTransaction(id: number, formData: FormData) {
+    const validatedFields = UpdateTransactionSchema.safeParse({
+        value: formData.get("value"),
+        date: formData.get("date"),
+        description: formData.get("description"),
+        type: formData.get("type")
+    })
+    if (validatedFields.success) {
+        let { value, date, description, type } = validatedFields.data
+        if (!date) date = new Date().toISOString().split('T')[0]
+        value = type === "income" ? value : -value
+        const response = await fetch(`${BASE_URL}/transactions/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                value, date, description, type
+            })
+        })
+        const json = await response.json()
+        date = json.date.split('-')
+        const path = `/years/${date[0]}/months/${reverseMonths[parseInt(date[1])]}`
+        revalidatePath(path)
+        redirect(path)
+    }
+}
 
 export async function deleteTransaction(id: number, month: string, year: string) {
-    console.log(id)
     await fetch(`${BASE_URL}/transactions/${id}`, { method: "DELETE" })
-    revalidatePath(`/years/${year}/months/${month}`)
+    const path = `/years/${year}/months/${months[month]}`
+    revalidatePath(path)
     redirect(`/years/${year}/months/${month}`)
 }
 
@@ -71,15 +116,28 @@ export async function createTransaction(formData: FormData) {
     const validatedFields = CreateTransactionSchema.safeParse({
         value: formData.get("value"),
         date: formData.get("date"),
-        description: formData.get("description")
+        description: formData.get("description"),
+        type: formData.get("type")
     })
-    if (validatedFields.success) {
-        if (!validatedFields.data.date) validatedFields.data.date = new Date().toISOString().split('T')[0]
-        const response = await fetch(BASE_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(validatedFields.data)
+    if (!validatedFields.success) {
+        return {
+            status: 400,
+            message: z.treeifyError(validatedFields.error)
+        }
+    }
+    let { value, date, description, type } = validatedFields.data
+    if (!date) date = new Date().toISOString().split('T')[0]
+    value = type === "income" ? value : -value
+    const response = await fetch(BASE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            value, date, description, type
         })
+    })
+    return {
+        status: response.status,
+        message: response.statusText
     }
 }
 

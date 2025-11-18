@@ -12,6 +12,7 @@ import { EuroIcon, VietnamIcon } from "@/app/components/icons";
 import {PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Tooltip from "@mui/material/Tooltip";
 import { formatDate, formatEuro, formatVND } from "../lib/formatterService";
+import Link from "next/link";
 
 export function TransactionsTable({
     transactions,
@@ -29,7 +30,8 @@ export function TransactionsTable({
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell align="center">Datum</TableCell>
+                        <TableCell align="center">Date</TableCell>
+                        <TableCell align="left">Description</TableCell>
                         <TableCell align="right">
                                 <span className="inline-flex items-center justify-center gap-1">
                                     <EuroIcon />
@@ -51,16 +53,19 @@ export function TransactionsTable({
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell align="center">{formatDate(t.date)}</TableCell>
+                            <TableCell align="left">{t.description}</TableCell>
                             <TableCell align="right">{formatEuro(t.value)}</TableCell>
                             <TableCell align="right">{formatVND(t.value * rate)}</TableCell>
                             <TableCell align="center" className={`h-16 w-16 flex items-center justify-center cursor-pointer`}>
-                                <Tooltip title={`Löschen`} placement="top">
-                                    <TrashIcon onClick={() => deleteTransaction(t.id, month, year)}/>
+                                <Tooltip title={`Edit`} placement="top">
+                                    <Link href={`/transactions?id=${t.id}&value=${t.value}&description=${t.description}&date=${t.date}`}>
+                                        <PencilSquareIcon/>
+                                    </Link>
                                 </Tooltip>
                             </TableCell>
                             <TableCell align="center" className={`h-16 w-16 flex items-center justify-center cursor-pointer`}>
-                                <Tooltip title={`Bearbeiten`} placement="top">
-                                    <PencilSquareIcon/>
+                                <Tooltip title={`Delete`} placement="top">
+                                    <TrashIcon onClick={() => deleteTransaction(t.id, month, year)}/>
                                 </Tooltip>
                             </TableCell>
                         </TableRow>

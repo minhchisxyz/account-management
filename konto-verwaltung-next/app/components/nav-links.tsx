@@ -1,8 +1,18 @@
 'use client'
 
 import Link from "next/link"
-import {DynamicLink, StaticLink } from "./navigation"
 import { usePathname } from "next/navigation"
+import { ReactNode } from "react"
+
+export type StaticLink = {
+    href: string,
+    icon: ReactNode
+}
+
+export type DynamicLink = {
+    label: string,
+    href: string
+}
 
 export default function NavLinks({ staticLinks, links } : {
     staticLinks: StaticLink[],

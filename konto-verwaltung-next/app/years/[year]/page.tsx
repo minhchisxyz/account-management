@@ -27,20 +27,20 @@ export default async function YearDetailsPage({
                     <Graph labels={totals.map(t => t.month)}
                            dataset={totals.map(t => t.total)}
                            currency={'EUR'}
-                           title={`Monatliche Analyse ${year}`}/>
+                           title={`Monthly Analysis in ${year}`}/>
                 </div>
                 <div className="w-full h-full flex flex-col items-center justify-center">
                     <Graph labels={totals.map(t => t.month)}
                            dataset={totals.map(t => t.total)}
                            currency={'VND'}
-                           title={`Monatliche Analyse ${year}`}/>
+                           title={`Monthly Analysis in ${year}`}/>
                 </div>
             </div>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center">Monat</TableCell>
+                            <TableCell align="center">Month</TableCell>
                             <TableCell align="right">
                                 <span className="inline-flex items-center justify-center gap-1">
                                     <EuroIcon />

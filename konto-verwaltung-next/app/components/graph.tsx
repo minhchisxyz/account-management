@@ -9,6 +9,8 @@ import {
     Title,
     Tooltip,
     Legend,
+    Scale,
+    Tick,
 } from 'chart.js';
 import { Line } from "react-chartjs-2";
 import { formatEuro, formatVND } from "../lib/formatterService";
@@ -56,7 +58,20 @@ export default function Graph({
                 display: true,
                 position: 'left' as const,
                 ticks: {
-                    callback: currency === 'VND' ? formatVND : formatEuro
+                    callback: function (
+                        this: Scale,
+                        tickValue: string | number,
+                        _index: number,
+                        _ticks: Tick[]
+                    ): string {
+                        const num =
+                            typeof tickValue === 'number'
+                                ? tickValue
+                                : Number(tickValue);
+
+                        const formatter = currency === 'VND' ? formatVND : formatEuro;
+                        return formatter(num);
+                    },
                 }
             }
         },

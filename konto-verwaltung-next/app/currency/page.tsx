@@ -21,31 +21,31 @@ export default function CurrencyPage({rates}: {
     }, [filter])
     const filters = [
         {
-            label: 'Alle',
+            label: 'All',
             value: 0
         },
         {
-            label: '7 Tagen',
+            label: 'A Week',
             value: 7
         },
         {
-            label: 'Monat',
+            label: 'A Month',
             value: 30
         },
         {
-            label: '3 Monaten',
+            label: '3 Months',
             value: 90
         },
         {
-            label: '6 Monaten',
+            label: '6 Months',
             value: 180
         },
         {
-            label: '9 Monaten',
+            label: '9 Months',
             value: 270
         },
         {
-            label: 'Jahr',
+            label: 'A Year',
             value: 365
         }
     ]
@@ -63,7 +63,7 @@ export default function CurrencyPage({rates}: {
             <Graph labels={filteredRates.map(r => formatDate(r.id.date))}
                    dataset={filteredRates.map(t => t.rate)}
                    currency={'VND'}
-                   title={`Währungskurs`}/>
+                   title={`Currency Exchange Rate`}/>
         </div>
     )
 }

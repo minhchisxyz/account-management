@@ -25,13 +25,13 @@ export default async function MonthDetailsPage({
                     <Graph labels={transactions.map(t => formatDate(t.date))}
                            dataset={transactions.map(t => t.value)}
                            currency={'EUR'}
-                           title={`Analyse in ${month.toUpperCase()}, ${year}`}/>
+                           title={`Analysis in ${month.toUpperCase()}, ${year}`}/>
                 </div>
                 <div className="w-full h-full flex flex-col items-center justify-center">
                     <Graph labels={transactions.map(t => formatDate(t.date))}
                            dataset={transactions.map(t => t.value * rate)}
                            currency={'VND'}
-                           title={`Analyse in ${month.toUpperCase()}, ${year}`}/>
+                           title={`Analysis in ${month.toUpperCase()}, ${year}`}/>
                 </div>
             </div>
             <TransactionsTable transactions={transactions} month={month} year={year} rate={rate}/>

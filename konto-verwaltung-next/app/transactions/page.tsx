@@ -1,9 +1,21 @@
-import CreateTransactionForm from "../components/transaction-form";
+import TransactionForm from "../components/transaction-form";
 
-export default function CreateTransaction() {
+export default async function TransactionPage(props: {
+    searchParams?: Promise<{
+        id?: number;
+        value?: number;
+        description?: string;
+        date?: string;
+    }>;
+}) {
+    const searchParams = await props.searchParams;
+    const id = searchParams?.id;
+    const value = searchParams?.value;
+    const description = searchParams?.description;
+    const date = searchParams?.date;
     return (
         <div className="flex justify-center items-center h-screen">
-            <CreateTransactionForm/>
+            <TransactionForm id={id} value={value} description={description} date={date}/>
         </div>
     )
 }
