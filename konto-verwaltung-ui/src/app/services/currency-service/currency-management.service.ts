@@ -35,7 +35,7 @@ export class CurrencyManagementService{
   public getRate(): number {
     if (!this.rate) {
       this.service.getTodayRate({
-        bank: 'vib'
+        bank: 'vcb'
       }).subscribe({
         next: value => {
           this.rate = value.rate || 1

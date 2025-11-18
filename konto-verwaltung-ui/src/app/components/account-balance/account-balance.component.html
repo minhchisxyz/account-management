@@ -2,20 +2,13 @@
   <div>
     <div id="account-balance">
       <button type="button" class="btn">
-        <strong>Kontostand: {{ currencyManagementService.numberInEUR(balance) }} | {{ this.currencyManagementService.numberInVND(Math.round(balance * rate)) }}</strong>
-        <div id="container-stars">
-          <div id="stars">
-          </div>
-        </div>
-
-        <div id="glow">
-          <div class="circle"></div>
-          <div class="circle"></div>
-        </div>
+        <strong>
+          Kontostand: {{ currencyManagementService.numberInEUR(balance) }} | {{ this.currencyManagementService.numberInVND(Math.round(balance * rate)) }}
+        </strong>
       </button>
     </div>
     <app-graph [title]="title"
-               [vibDataPoints]="dataPoints"
+               [vcbDataPoints]="dataPoints"
                [xTitle]="xTitle"
                [yTitle]="yTitle"/>
   </div>

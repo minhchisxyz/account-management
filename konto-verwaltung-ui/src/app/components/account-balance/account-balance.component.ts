@@ -48,9 +48,10 @@ export class AccountBalanceComponent implements OnInit{
     this.yTitle = '€'
 
     this.currencyService.getTodayRate({
-      bank: 'vib'
+      bank: 'vcb'
     }).subscribe({
       next: val => {
+        console.log(val)
         this.rate = val.rate || 0
         this.loaded = true
       }

@@ -17,7 +17,6 @@ import {LoaderComponent} from "../../../../components/loader/loader.component";
 })
 export class CurrencyExchangeComponent implements OnInit{
   title: string = 'Geldwechselsrate von EUR zu VND'
-  vibDataPoints: any[] = []
   vcbDataPoints: any[] = []
   xTitle: string = 'Datum'
   yTitle: string = 'VND'
@@ -32,11 +31,6 @@ export class CurrencyExchangeComponent implements OnInit{
 
     this.service.getAllRates().subscribe({
       next: value => {
-
-        this.vibDataPoints = value.vibRates!.map(rate => ({
-          label: rate.id!.date,
-          y: rate.rate
-        })) || []
 
         this.vcbDataPoints = value.vcbRates!.map(rate => ({
           label: rate.id!.date,

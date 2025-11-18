@@ -16,7 +16,10 @@ import vn.diepgia.mchis.konto_verwaltung.repositories.TransactionRepository;
 import vn.diepgia.mchis.konto_verwaltung.services.CurrencyRateService;
 import vn.diepgia.mchis.konto_verwaltung.services.TransactionService;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -26,6 +29,7 @@ public class StartupApplicationRunner implements ApplicationRunner {
 
     private final CurrencyRateService currencyRateService;
     private final TransactionService transactionService;
+    private final CurrencyExchangeRateRepository currencyExchangeRateRepository;
     private final TransactionRepository transactionRepository;
     private final CurrencyExchangeRateRepository repository;
     private static final Logger LOGGER = LoggerFactory.getLogger(StartupApplicationRunner.class);
@@ -93,10 +97,6 @@ public class StartupApplicationRunner implements ApplicationRunner {
 
         try (FileWriter fileWriter = new FileWriter(new File("rates.csv"))) {
             var rates = currencyRateService.getAllRates();
-            for (var rate: rates.getVibRates()) {
-                fileWriter.append(rate.toString());
-                fileWriter.append("\n");
-            }
             for (var rate: rates.getVcbRates()) {
                 fileWriter.append(rate.toString());
                 fileWriter.append("\n");

@@ -3,16 +3,15 @@ package vn.diepgia.mchis.konto_verwaltung.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.diepgia.mchis.konto_verwaltung.dto.MonthTotal;
+import vn.diepgia.mchis.konto_verwaltung.dto.TransactionRequest;
 import vn.diepgia.mchis.konto_verwaltung.dto.YearTotal;
 import vn.diepgia.mchis.konto_verwaltung.entities.Transaction;
 import vn.diepgia.mchis.konto_verwaltung.repositories.TransactionRepository;
-import vn.diepgia.mchis.konto_verwaltung.dto.TransactionRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public class TransactionService {
     }
 
     public Transaction createTransaction(TransactionRequest transaction) {
-        LocalDate date = transaction.getDate() == null ? LocalDate.now() : LocalDate.parse(transaction.getDate());
+        LocalDate date = transaction.getDate() == null || transaction.getDate().isBlank() ? LocalDate.now() : LocalDate.parse(transaction.getDate());
         String description = transaction.getDescription().toLowerCase().contains("lb") ? "Lebensmittel" : transaction.getDescription();
         return transactionRepository.save(
                 Transaction.builder()

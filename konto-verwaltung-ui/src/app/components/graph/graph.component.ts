@@ -36,10 +36,8 @@ export class GraphComponent implements OnInit, OnChanges {
   @Input() title: string = ''
   @Input() currency: boolean = false
   @Input() usingDate: boolean = false
-  @Input() vibDataPoints: any[] = []
   @Input() vcbDataPoints: any[] = []
   @Output() changeRateEvent = new EventEmitter<string>()
-  filteredVIBDataPoints: any[] = []
   filteredVCBDataPoints: any[] = []
   input: string = ''
   rate: number = 0
@@ -82,7 +80,6 @@ export class GraphComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.newRate = ''
-    this.filteredVIBDataPoints = this.vibDataPoints
     this.filteredVCBDataPoints = this.vcbDataPoints
     if (this.currency) this.filter('week')
     else if (this.usingDate) this.init()
@@ -91,10 +88,6 @@ export class GraphComponent implements OnInit, OnChanges {
   }
 
   init() {
-    this.filteredVIBDataPoints = this.vibDataPoints.map(rate => ({
-      label: this.dateService.reformatDate(rate.label),
-      y: rate.y
-    }))
     this.filteredVCBDataPoints = this.vcbDataPoints.map(rate => ({
       label: this.dateService.reformatDate(rate.label),
       y: rate.y
@@ -103,7 +96,7 @@ export class GraphComponent implements OnInit, OnChanges {
 
   prepareData() {
     if (this.currency) {
-      this.rate = this.vibDataPoints[this.vcbDataPoints.length - 1].y
+      this.rate = this.vcbDataPoints[this.vcbDataPoints.length - 1].y
       this.result = this.rate
       this.chartOptions = {
         title: {
@@ -124,13 +117,6 @@ export class GraphComponent implements OnInit, OnChanges {
           shared: true
         },
         data: [
-          {
-            type: "spline",
-            name: "VIB Rate",
-            showInLegend: true,
-            dataPoints: this.filteredVIBDataPoints,
-            fontFamily: "sans-serif"
-          },
           {
             type: "spline",
             name: "VCB Rate",
@@ -162,9 +148,9 @@ export class GraphComponent implements OnInit, OnChanges {
         data: [
           {
             type: "spline",
-            name: "VIB Rate",
+            name: "VCB Rate",
             showInLegend: true,
-            dataPoints: this.filteredVIBDataPoints,
+            dataPoints: this.filteredVCBDataPoints,
             fontFamily: "sans-serif"
           }
         ]
@@ -178,10 +164,6 @@ export class GraphComponent implements OnInit, OnChanges {
       this.init()
     } else {
       const begin = this.dateService.getDate(option) || new Date()
-      this.filteredVIBDataPoints = this.vibDataPoints.slice().filter(p => new Date(p.label) >= begin).map(rate => ({
-        label: this.dateService.reformatDate(rate.label),
-        y: rate.y
-      }))
       this.filteredVCBDataPoints = this.vcbDataPoints.slice().filter(p => new Date(p.label) >= begin).map(rate => ({
         label: this.dateService.reformatDate(rate.label),
         y: rate.y
