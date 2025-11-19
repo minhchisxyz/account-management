@@ -1,4 +1,3 @@
-import {getAllMonthTotals, MonthTotal } from "@/app/lib/transaction-actions";
 import Graph from "../../components/graph";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,19 +6,23 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { formatEuro, formatVND } from "@/app/lib/formatterService";
-import { getRate } from "@/app/lib/currency-actions";
+import {formatEuro, formatVND, getMonthName} from "@/app/lib/formatterService";
+import { getRate } from "@/app/lib/currency/actions";
 import { EuroIcon, VietnamIcon } from "@/app/components/icons";
-
+import {fetchAllMonthTotals} from "@/app/lib/transaction/data";
 
 export default async function YearDetailsPage({
     params
 }: {
-    params: Promise<{year: string}>,
+    params: Promise<{year: number}>,
 }) {
     const { year } = await params;
-    const rate = await getRate()
-    const totals: MonthTotal[] = await getAllMonthTotals(year);
+    const data = await Promise.all([
+      getRate(),
+      fetchAllMonthTotals(year)
+    ])
+    const rate = data[0]
+    const totals: {month: string, total: number}[] = data[1].map(t => ({month: getMonthName(t.month).toUpperCase(), total: t.total}))
     return (
         <div className={`flex flex-col gap-4 w-full`}>
             <div className={`w-full h-full grid grid-cols-2 gap-10 flex-1`}>

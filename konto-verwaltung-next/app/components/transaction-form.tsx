@@ -1,7 +1,7 @@
 'use client'
 
 import TextField from "@mui/material/TextField";
-import { createTransaction, updateTransaction } from "../lib/transaction-actions";
+import { createTransaction, updateTransaction } from "../lib/transaction/actions";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
@@ -34,8 +34,8 @@ export default function TransactionForm({
     const linkClass = `flex items-center justify-center w-full h-9 px-2 py-1 rounded-md bg-white/15 backdrop-blur-md ${shadow} ${hover}`
     const updateTransactionWithId = updateTransaction.bind(null, id || 0)
     const createTransactionExtension = async (formData: FormData) => {
-        const response = await createTransaction(formData)
-        if (response.status === 200) setOpen(true)
+      await createTransaction(formData)
+      setOpen(true)
     }
     return (
         <form

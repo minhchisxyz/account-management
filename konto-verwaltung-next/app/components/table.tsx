@@ -1,6 +1,6 @@
 'use client'
 
-import {deleteTransaction, Transaction } from "../lib/transaction-actions";
+import {deleteTransaction } from "../lib/transaction/actions";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,6 +13,7 @@ import {PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Tooltip from "@mui/material/Tooltip";
 import { formatDate, formatEuro, formatVND } from "../lib/formatterService";
 import Link from "next/link";
+import {Transaction} from "@/app/lib/definitions";
 
 export function TransactionsTable({
     transactions,
@@ -23,7 +24,7 @@ export function TransactionsTable({
     transactions: Transaction[],
     rate: number,
     month: string,
-    year: string
+    year: number
 }) {
     return (
         <TableContainer component={Paper}>
@@ -58,7 +59,7 @@ export function TransactionsTable({
                             <TableCell align="right">{formatVND(t.value * rate)}</TableCell>
                             <TableCell align="center" className={`h-16 w-16 flex items-center justify-center cursor-pointer`}>
                                 <Tooltip title={`Edit`} placement="top">
-                                    <Link href={`/transactions?id=${t.id}&value=${t.value}&description=${t.description}&date=${t.date}`}>
+                                    <Link href={`/transactions?id=${t.id}&value=${t.value}&description=${t.description}&date=${t.date.toISOString().split('T')[0]}`}>
                                         <PencilSquareIcon/>
                                     </Link>
                                 </Tooltip>

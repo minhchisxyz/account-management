@@ -1,69 +1,11 @@
-'use client'
 
-import {useMemo, useState } from "react"
-import Graph from "../components/graph"
-import {CurrencyRate } from "../lib/currency-actions"
-import { formatDate } from "../lib/formatterService"
+import {CurrencyRate} from "@/app/lib/definitions";
+import CurrencyContentPage from "@/app/components/currency-content-page";
+import {fetchAllRates} from "@/app/lib/currency/data";
 
-export default function CurrencyPage({rates}: {
-    rates: CurrencyRate[]
-}) {
-    const shadow = 'shadow-[4px_4px_8px_#dddddd,-4px_-4px_6px_#ffffff]'
-    const hover = 'hover:shadow-none hover:inset-shadow-[-4px_4px_8px_#dddddd,4px_-4px_6px_#ffffff] hover:cursor-pointer'
-    const linkClass = `flex items-center justify-center w-32 h-9 px-2 py-1 rounded-md bg-white/15 backdrop-blur-md ${shadow} ${hover}`
-    const activeClass = `shadow-none inset-shadow-[-4px_4px_8px_#cccccc,4px_-4px_6px_#ffffff]`
-    const [filter, setFilter] = useState(7)
-    const day = 1000 * 60 * 60 * 24
-    const filteredRates = useMemo(() => {
-        if (filter === 0) return rates
-        const today = new Date()
-        return rates.filter(r => today.getTime() - new Date(r.id.date).getTime() <= day * filter)
-    }, [filter])
-    const filters = [
-        {
-            label: 'All',
-            value: 0
-        },
-        {
-            label: 'A Week',
-            value: 7
-        },
-        {
-            label: 'A Month',
-            value: 30
-        },
-        {
-            label: '3 Months',
-            value: 90
-        },
-        {
-            label: '6 Months',
-            value: 180
-        },
-        {
-            label: '9 Months',
-            value: 270
-        },
-        {
-            label: 'A Year',
-            value: 365
-        }
-    ]
+export default async function CurrencyLayout() {
+    const rates: CurrencyRate[] = await fetchAllRates()
     return (
-        <div className={"flex flex-col items-center justify-center w-full max-h-screen p-10"}>
-            <div className={"flex flex-row items-center justify-center w-full p-2 gap-10"}>
-                { filters.map(f => (
-                    <button key={f.value}
-                            onClick={() => setFilter(f.value)}
-                            className={`${linkClass} ${filter === f.value ? activeClass : ''}`}>
-                        {f.label}
-                    </button>
-                ))}
-            </div>
-            <Graph labels={filteredRates.map(r => formatDate(r.id.date))}
-                   dataset={filteredRates.map(t => t.rate)}
-                   currency={'VND'}
-                   title={`Currency Exchange Rate`}/>
-        </div>
+        <CurrencyContentPage rates={rates}/>
     )
 }

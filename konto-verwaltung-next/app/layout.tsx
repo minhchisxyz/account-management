@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import {getAllYears} from "./lib/transaction-actions";
 import NavLinks, { StaticLink } from "./components/nav-links";
 import {ArrowTrendingUpIcon, BanknotesIcon, HomeIcon} from "@heroicons/react/24/outline"
 import Tooltip from "@mui/material/Tooltip"
+import {fetchAllYears} from "@/app/lib/transaction/data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +25,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    const years: number[] = await getAllYears()
+    const years: number[] = (await fetchAllYears()).map(y => y.year)
     const staticLinks: StaticLink[] = [
         {
             href: ``,

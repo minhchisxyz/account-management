@@ -1,13 +1,15 @@
 import Graph from "./components/graph";
-import {getRate } from "./lib/currency-actions";
 import { formatEuro, formatVND } from "./lib/formatterService";
-import {getAllYearTotals, getBalance, YearTotal } from "./lib/transaction-actions";
+import {fetchYearTotals} from "@/app/lib/transaction/data";
+import {YearTotal} from "@/app/lib/definitions";
+import {getRate} from "@/app/lib/currency/actions";
+import {fetchBalance} from "@/app/lib/currency/data";
 
 export default async function Home() {
     const data = await Promise.all([
-        getBalance(),
+        fetchBalance(),
         getRate(),
-        getAllYearTotals()
+        fetchYearTotals(),
     ])
     const balance: number = data[0]
     const rate: number = data[1]

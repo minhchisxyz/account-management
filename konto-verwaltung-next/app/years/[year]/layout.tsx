@@ -1,6 +1,7 @@
 import NavLinks from "@/app/components/nav-links";
-import { getAllMonths } from "@/app/lib/transaction-actions";
 import { ReactNode } from "react";
+import {fetchAllMonths} from "@/app/lib/transaction/data";
+import {getMonthName} from "@/app/lib/formatterService";
 
 export default async function Layout({
     params, children
@@ -9,7 +10,8 @@ export default async function Layout({
     children: ReactNode
 }) {
     const { year } = await params;
-    const months: string[] = await getAllMonths(year);
+    const months: string[] = (await fetchAllMonths(parseInt(year))).map(m => getMonthName(m.month).toUpperCase())
+
     return (
         <div className={`min-h-screen flex w-full`}>
             <nav className={`w-32 p-4 flex flex-col gap-4 min-h-screen`}>
