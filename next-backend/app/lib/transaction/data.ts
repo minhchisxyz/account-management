@@ -16,7 +16,7 @@ export async function getTransaction(id: number) {
   }
 }
 
-export async function removeTransaction(id: number) {
+export async function deleteTransaction(id: number) {
   try {
     console.log("Deleting transaction...");
     await prisma.transaction.delete({
@@ -33,7 +33,7 @@ export async function removeTransaction(id: number) {
 export async function editTransaction(id: number, value: number, description: string, date: Date = new Date()) {
   try {
     console.log("Editing transaction...");
-    await prisma.transaction.update({
+    return await prisma.transaction.update({
       where: {
         id: id
       },
@@ -49,17 +49,18 @@ export async function editTransaction(id: number, value: number, description: st
   }
 }
 
-export async function saveTransaction(value: number, description: string, date: Date = new Date()) {
+export async function saveTransaction(amount: number, description: string, date: Date = new Date()) {
   try {
     console.log("Saving transaction...");
-    await prisma.transaction.create({
+    const transaction = await prisma.transaction.create({
       data: {
-        amount: value,
+        amount: amount,
         description: description,
         date: date
       }
     })
-    console.log(`Saved transaction ${date.toISOString()} : ${value}, ${description}`)
+    console.log(`Saved transaction ${date.toISOString()} : ${amount}, ${description}`)
+    return transaction
   } catch (error) {
     console.log('Database Error:', error);
     throw new Error('Failed to save transaction.');
