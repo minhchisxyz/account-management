@@ -5,11 +5,7 @@ import prisma from "../prisma";
 const BASE_URL = `${process.env.VCB_URL as string}`
 
 export async function getRate(): Promise<number> {
-  const d = new Date()
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  const today = `${year}-${month}-${day}`;
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const rates = await Promise.all([
     fetch(`${BASE_URL}${today}`),
     fetchRate()
