@@ -2,6 +2,20 @@
 import {GroupedTransactions, MonthTotal, Transaction, YearTotal} from "../definitions";
 import prisma from "../prisma";
 
+export async function getTransaction(id: number) {
+  try {
+    console.log(`Fetching transaction ${id}...`)
+    return await prisma.transaction.findUnique({
+      where: {
+        id: id
+      }
+    })
+  } catch (error) {
+    console.log('Database Error:', error);
+    throw new Error(`Failed to fetch transaction ${id}.`);
+  }
+}
+
 export async function removeTransaction(id: number) {
   try {
     console.log("Deleting transaction...");

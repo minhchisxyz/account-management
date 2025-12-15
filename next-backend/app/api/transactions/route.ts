@@ -13,11 +13,12 @@ const TransactionSchema = z.object({
 const CreateTransactionSchema = TransactionSchema.omit({ id: true })
 const UpdateTransactionSchema = TransactionSchema.omit({ id: true })
 
-export async function POST(formData: FormData) {
+export async function POST(request: Request) {
+  const body = await request.json();
   const validatedFields = CreateTransactionSchema.safeParse({
-    value: formData.get("value"),
-    date: formData.get("date"),
-    description: formData.get("description")
+    value: body.get("value"),
+    date: body.get("date"),
+    description: body.get("description")
   })
   if (validatedFields.success) {
     const { value, date, description } = validatedFields.data
