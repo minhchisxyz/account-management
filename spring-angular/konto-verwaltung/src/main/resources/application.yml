@@ -1,0 +1,15 @@
+spring:
+  thymeleaf:
+    prefix: classpath:/static/
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 50MB
+springdoc:
+  default-produces-media-type: application/json
+application:
+  currency:
+    vib-url: https://www.vib.com.vn/en/ty-gia/bang-ty-gia
+    vcb-url: https://www.vietcombank.com.vn/api/exchangerates?date=
+

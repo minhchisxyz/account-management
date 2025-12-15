@@ -1,0 +1,79 @@
+<div *ngIf="loaded else loading">
+  <app-graph [title]="title"
+             [usingDate]="true"
+             [vcbDataPoints]="dataPoints"
+             [xTitle]="xTitle"
+             [yTitle]="yTitle"/>
+
+  <h1 id="current-sum" *ngIf="indexes.length">
+    Aktuelle Summe: {{ currentSum.toFixed(2) }} € | {{ this.currencyManagementService.numberInVND(Math.round(currentSum) * rate) }} VND
+  </h1>
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>Datum</th>
+      <th>Betrag</th>
+      <th>Zweck</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody *ngFor="let i of Array.from(Array(transactions.length).keys())">
+    <tr>
+      <td>{{ dateService.reformatDate(transactions[i].transaction.date || '') }}</td>
+      <td>{{ currencyManagementService.numberInEUR(transactions[i].transaction.value) }}  | {{ this.currencyManagementService.numberInVND(Math.round((transactions[i]?.transaction.value || 1 ) * rate)) }}</td>
+      <td>{{ transactions[i].transaction.description }}</td>
+      <td>
+        <button mat-mini-fab
+                matTooltip="Verarbeiten"
+                matTooltipPosition="left"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+                (click)="editTransaction(transactions[i])"
+                color="primary">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </td>
+      <td>
+        <button mat-mini-fab
+                matTooltip="Löschen"
+                matTooltipPosition="left"
+                (click)="deleteTransaction(transactions[i])"
+                color="warn">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+      <td>
+        <button mat-mini-fab
+                color="basic"
+                matTooltip="Zur Summe hinzufügen"
+                matTooltipPosition="left"
+                *ngIf="!transactions[i].included else included"
+                (click)="addToSum(i)">
+          <mat-icon>add</mat-icon>
+        </button>
+        <ng-template #included>
+          <button mat-mini-fab
+                  matTooltip="Aus Summe Entfernen"
+                  matTooltipPosition="left"
+                  color="warn"
+                  (click)="removeFromSum(i)">
+            <mat-icon>remove</mat-icon>
+          </button>
+        </ng-template>
+      </td>
+    </tr>
+    </tbody>
+    <tbody>
+    <tr>
+      <th>Summe</th>
+      <td>{{ currencyManagementService.numberInEUR(sum) }} | {{ this.currencyManagementService.numberInVND(Math.round(sum * rate)) }} </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+<ng-template #loading>
+  <app-loader/>
+</ng-template>

@@ -1,0 +1,92 @@
+<app-create-transaction/>
+
+<ul class="nav flex-column">
+  <li class="nav-item box">
+    <a class="nav-link nav-icon nav-nav"
+       matTooltip="Home"
+       [matTooltipPosition]="'after'"
+       href="">
+      <mat-icon>home</mat-icon>
+    </a>
+    <div class="space">
+      <span style="--i: 31" class="star"></span>
+      <span style="--i: 12" class="star"></span>
+      <span style="--i: 57" class="star"></span>
+      <span style="--i: 93" class="star"></span>
+      <span style="--i: 23" class="star"></span>
+      <span style="--i: 70" class="star"></span>
+      <span style="--i: 6" class="star"></span>
+    </div>
+  </li>
+  <li class="nav-item box">
+    <a class="nav-link nav-icon nav-nav"
+       matTooltip="Geldwechselsrate"
+       [matTooltipPosition]="'after'"
+       href="currency">
+      <mat-icon>currency_exchange</mat-icon>
+    </a>
+    <div class="space">
+      <span style="--i: 31" class="star"></span>
+      <span style="--i: 12" class="star"></span>
+      <span style="--i: 57" class="star"></span>
+      <span style="--i: 93" class="star"></span>
+      <span style="--i: 23" class="star"></span>
+      <span style="--i: 70" class="star"></span>
+      <span style="--i: 6" class="star"></span>
+    </div>
+  </li>
+  <li class="nav-item box">
+    <a class="nav-link nav-icon nav-nav"
+       matTooltip="Salaries and Savings"
+       [matTooltipPosition]="'after'"
+       href="salaries-and-savings">
+      <mat-icon>attach_money</mat-icon>
+    </a>
+    <div class="space">
+      <span style="--i: 31" class="star"></span>
+      <span style="--i: 12" class="star"></span>
+      <span style="--i: 57" class="star"></span>
+      <span style="--i: 93" class="star"></span>
+      <span style="--i: 23" class="star"></span>
+      <span style="--i: 70" class="star"></span>
+      <span style="--i: 6" class="star"></span>
+    </div>
+  </li>
+  <li class="nav-item box">
+    <a class="nav-link nav-icon nav-nav"
+       matTooltip="Neue Transaktion"
+       [matTooltipPosition]="'after'"
+       (click)="reset()"
+       data-bs-toggle="modal"
+       data-bs-target="#staticBackdrop">
+        <mat-icon>payments</mat-icon>
+    </a>
+    <div class="space">
+      <span style="--i: 31" class="star"></span>
+      <span style="--i: 12" class="star"></span>
+      <span style="--i: 57" class="star"></span>
+      <span style="--i: 93" class="star"></span>
+      <span style="--i: 23" class="star"></span>
+      <span style="--i: 70" class="star"></span>
+      <span style="--i: 6" class="star"></span>
+    </div>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link disabled" aria-disabled="true">Jahr auswählen</a>
+  </li>
+  <li class="nav-item" *ngFor="let year of years">
+    <div class="box" routerLinkActive="active">
+      <a class="nav-link nav-nav" [routerLink]="['years', year]">{{ year }}</a>
+      <div class="space">
+        <span style="--i: 31" class="star"></span>
+        <span style="--i: 12" class="star"></span>
+        <span style="--i: 57" class="star"></span>
+        <span style="--i: 93" class="star"></span>
+        <span style="--i: 23" class="star"></span>
+        <span style="--i: 70" class="star"></span>
+        <span style="--i: 6" class="star"></span>
+      </div>
+    </div>
+  </li>
+</ul>
+

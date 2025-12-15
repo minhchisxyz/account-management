@@ -1,0 +1,86 @@
+<div *ngIf="loaded else loading">
+  <canvasjs-chart [options]="chartOptions"/>
+</div>
+<ng-template #loading>
+  <app-loader/>
+</ng-template>
+
+<div id="container" class="row" *ngIf="currency">
+  <div class="col-3" id="poda">
+    <div class="glow"></div>
+    <div class="darkBorderBg"></div>
+    <div class="darkBorderBg"></div>
+    <div class="darkBorderBg"></div>
+
+    <div class="white"></div>
+
+    <div class="border"></div>
+
+    <div id="main">
+      <input placeholder="€" type="text" name="text" class="input" [(ngModel)]="input" (keyup)="calculate()" />
+      <div id="input-mask"></div>
+      <div id="pink-mask"></div>
+      <div class="filterBorder"></div>
+      <div id="search-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          height="24"
+          fill="none"
+          class="feather feather-search"
+        >
+          <circle stroke="url(#search)" r="8" cy="11" cx="11"></circle>
+          <line
+            stroke="url(#searchl)"
+            y2="16.65"
+            y1="22"
+            x2="16.65"
+            x1="22"
+          ></line>
+          <defs>
+            <linearGradient gradientTransform="rotate(50)" id="search">
+              <stop stop-color="#f8e7f8" offset="0%"></stop>
+              <stop stop-color="#b6a9b7" offset="50%"></stop>
+            </linearGradient>
+            <linearGradient id="searchl">
+              <stop stop-color="#b6a9b7" offset="0%"></stop>
+              <stop stop-color="#837484" offset="50%"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-3" id="result">
+    <button class="button">
+      <div class="button__int">
+        <span class="button__span">{{ service.numberInVND(result)  }}</span>
+      </div>
+    </button>
+  </div>
+  <div class="col-3" id="change-rate">
+    <mat-form-field>
+      <mat-label>Rate ändern</mat-label>
+      <input type="text" matInput [(ngModel)]="newRate" (keyup.enter)="changeRate()" placeholder="vib 27000.123">
+    </mat-form-field>
+  </div>
+  <div class="col" id="filter">
+    <mat-form-field>
+      <mat-label>Anzeigefilter</mat-label>
+      <mat-select value="Innerhalb 7 Tagen">
+        <mat-option (click)="filter('none')" value="Kein Filter aktiv">None</mat-option>
+        <mat-option (click)="filter('week')" value="Innerhalb 7 Tagen">Innerhalb 7 Tagen</mat-option>
+        <mat-option (click)="filter('month')" value="In diesem Monat">In diesem Monat</mat-option>
+        <mat-option (click)="filter('3months')" value="In letzten 3 Monaten">In letzten 3 Monaten</mat-option>
+        <mat-option (click)="filter('6months')" value="In letzten 6 Monaten">In letzten 6 Monaten</mat-option>
+        <mat-option (click)="filter('9months')" value="In letzten 9 Monaten">In letzten 9 Monaten</mat-option>
+        <mat-option (click)="filter('year')" value="In diesem Jahr">In diesem Jahr</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>

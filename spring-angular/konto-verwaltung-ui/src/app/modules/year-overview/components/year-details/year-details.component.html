@@ -1,0 +1,31 @@
+<div *ngIf="loaded else loading">
+  <app-graph [title]="title"
+             [vcbDataPoints]="dataPoints"
+             [xTitle]="xTitle"
+             [yTitle]="yTitle"/>
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>Monat</th>
+      <th>Betrag</th>
+    </tr>
+    </thead>
+    <tbody *ngFor="let data of dataPoints">
+    <tr>
+      <td>{{ data.label }}</td>
+      <td>{{ currencyManagementService.numberInEUR(data.y) }} | {{ this.currencyManagementService.numberInVND(Math.round(data.y * rate)) }}</td>
+    </tr>
+    </tbody>
+    <tbody>
+    <tr>
+      <th>Summe</th>
+      <td>{{ currencyManagementService.numberInEUR(sum) }} | {{ this.currencyManagementService.numberInVND(Math.round(sum * rate)) }} </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<ng-template #loading>
+  <app-loader/>
+</ng-template>

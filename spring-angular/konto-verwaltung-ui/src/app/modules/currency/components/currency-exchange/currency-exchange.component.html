@@ -1,0 +1,13 @@
+<div *ngIf="loaded else loading">
+  <app-graph [title]="title"
+             [usingDate]="true"
+             [vcbDataPoints]="vcbDataPoints"
+             [xTitle]="xTitle"
+             [currency]="true"
+             [yTitle]="yTitle"
+             (changeRateEvent)="changeRate($event)"/>
+</div>
+
+<ng-template #loading>
+  <app-loader/>
+</ng-template>
