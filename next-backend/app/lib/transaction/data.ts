@@ -74,8 +74,8 @@ export async function fetchYearTotals() {
     return await prisma.$queryRaw<YearTotal[]>`
             SELECT
                 EXTRACT(YEAR FROM date) AS year,
-                SUM(amountEUR) AS totalEUR,
-                SUM(amountVND) AS totalVND,
+                SUM("amountEUR") AS "totalEUR",
+                SUM("amountVND") AS "totalVND"
             FROM "Transaction"
             GROUP BY EXTRACT(YEAR FROM date)
             ORDER BY year`
@@ -119,8 +119,8 @@ export async function fetchAllMonthTotals(year: number) {
     return await prisma.$queryRaw<MonthTotal[]>`
         SELECT
             EXTRACT(MONTH FROM date) AS month,
-            SUM(amountEUR) AS totalEUR,
-            SUM(amountVND) AS totalVND,
+            SUM("amountEUR") AS "totalEUR",
+            SUM("amountVND") AS "totalVND"
         FROM "Transaction"
         WHERE EXTRACT(YEAR FROM date) = ${year}
         GROUP BY month
