@@ -143,37 +143,13 @@ export async function fetchAllTransactionsOfMonth(year: number, month: number) {
         amount: true,
         description: true,
         date: true
+      },
+      orderBy: {
+        date: 'desc'
       }
     }) as Transaction[]
   } catch (error) {
     console.log('Database Error:', error);
     throw new Error(`Fetching all transactions for month ${month} of year ${year}...`);
-  }
-}
-
-export async function fetchAllTransactionsOfMonthGroupByDate(year: number, month: number) {
-  try {
-    console.log(`Fetching all grouped by date transactions for month ${month} of year ${year}...`);
-    return (await prisma.transaction.groupBy({
-      by: ['date'],
-      where: {
-        date: {
-          gte: new Date(year, month - 1, 1),
-          lt: new Date(year, month, 1, 0, 0, 0, 0)
-        }
-      },
-      _sum: {
-        amount: true
-      },
-      orderBy: [{
-        date: 'asc'
-      }]
-    })).map(group => ({
-      date: group.date,
-      total: group._sum.amount ?? 0
-    })) as GroupedTransactions[]
-  } catch (error) {
-    console.log('Database Error:', error);
-    throw new Error(`Fetching all grouped by date transactions for month ${month} of year ${year}...`);
   }
 }
