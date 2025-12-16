@@ -36,9 +36,9 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
       final transaction = await TransactionAPI.getTransaction(widget.transactionId);
       setState(() {
         _descriptionController.text = transaction.description;
-        _amountController.text = transaction.amount.abs().toString();
+        _amountController.text = transaction.amountEUR.abs().toString();
         _selectedDate = transaction.date;
-        _transactionType = transaction.amount.isNegative ? TransactionType.spending : TransactionType.earning;
+        _transactionType = transaction.amountEUR.isNegative ? TransactionType.spending : TransactionType.earning;
         _isLoading = false;
       });
     } catch (e) {

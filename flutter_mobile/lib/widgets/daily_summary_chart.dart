@@ -8,9 +8,8 @@ enum ChartCurrency { eur, vnd }
 class DailySummaryChart extends StatelessWidget {
   final List<GroupedByDateTransaction> groupedTransactions;
   final ChartCurrency currency;
-  final double? rate;
 
-  const DailySummaryChart({super.key, required this.groupedTransactions, required this.currency, this.rate});
+  const DailySummaryChart({super.key, required this.groupedTransactions, required this.currency});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class DailySummaryChart extends StatelessWidget {
     double maxVal = double.negativeInfinity;
     double minVal = double.infinity;
     for (var total in groupedTransactions) {
-      final value = currency == ChartCurrency.eur ? total.total : total.total * (rate ?? 1);
+      final value = currency == ChartCurrency.eur ? total.totalEUR : total.totalVND;
       if (value > maxVal) maxVal = value;
       if (value < minVal) minVal = value;
     }
@@ -55,7 +54,7 @@ class DailySummaryChart extends StatelessWidget {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 90,
+                reservedSize: 100, 
                 getTitlesWidget: (value, meta) => Text(format.format(value), style: theme.textTheme.bodySmall),
               ),
             ),
@@ -86,7 +85,7 @@ class DailySummaryChart extends StatelessWidget {
             LineChartBarData(
               spots: groupedTransactions.asMap().entries.map((entry) {
                 final index = entry.key;
-                final total = currency == ChartCurrency.eur ? entry.value.total : entry.value.total * (rate ?? 1);
+                final total = currency == ChartCurrency.eur ? entry.value.totalEUR : entry.value.totalVND;
                 return FlSpot(index.toDouble(), total);
               }).toList(),
               isCurved: true,

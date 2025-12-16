@@ -8,9 +8,8 @@ enum ChartCurrency { eur, vnd }
 class YearlySummaryChart extends StatelessWidget {
   final List<YearTotal> yearTotals;
   final ChartCurrency currency;
-  final double? rate;
 
-  const YearlySummaryChart({super.key, required this.yearTotals, required this.currency, this.rate});
+  const YearlySummaryChart({super.key, required this.yearTotals, required this.currency});
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +23,11 @@ class YearlySummaryChart extends StatelessWidget {
         ? NumberFormat.currency(locale: 'de_DE', symbol: '€')
         : NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
-    // Safely calculate min and max values
+    // Safely calculate min and max values using the new fields
     double maxVal = double.negativeInfinity;
     double minVal = double.infinity;
     for (var total in yearTotals) {
-      final value = currency == ChartCurrency.eur ? total.total : total.total * (rate ?? 1);
+      final value = currency == ChartCurrency.eur ? total.totalEUR : total.totalVND;
       if (value > maxVal) maxVal = value;
       if (value < minVal) minVal = value;
     }
@@ -37,7 +36,7 @@ class YearlySummaryChart extends StatelessWidget {
     double minY = (minVal / 100).floor() * 100.0;
     double maxY = (maxVal / 100).ceil() * 100.0;
     if (minY == maxY) {
-      maxY += 100; // Add padding if the range is zero
+      maxY += 100;
     }
 
     return SizedBox(
@@ -47,7 +46,7 @@ class YearlySummaryChart extends StatelessWidget {
           gridData: FlGridData(
             show: true,
             drawVerticalLine: true,
-            horizontalInterval: (maxY - minY) / 4, // Dynamic interval
+            horizontalInterval: (maxY - minY).abs() / 4, // Dynamic interval
             getDrawingHorizontalLine: (value) => FlLine(color: theme.dividerColor, strokeWidth: 0.5),
             getDrawingVerticalLine: (value) => FlLine(color: theme.dividerColor, strokeWidth: 0.5),
           ),
@@ -62,7 +61,7 @@ class YearlySummaryChart extends StatelessWidget {
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                interval: 1, 
+                interval: 1,
                 getTitlesWidget: (value, meta) {
                   final index = value.toInt();
                   if (index >= 0 && index < yearTotals.length) {
@@ -85,7 +84,8 @@ class YearlySummaryChart extends StatelessWidget {
             LineChartBarData(
               spots: yearTotals.asMap().entries.map((entry) {
                 final index = entry.key;
-                final total = currency == ChartCurrency.eur ? entry.value.total : entry.value.total * (rate ?? 1);
+                // Use the new fields for the spot values
+                final total = currency == ChartCurrency.eur ? entry.value.totalEUR : entry.value.totalVND;
                 return FlSpot(index.toDouble(), total);
               }).toList(),
               isCurved: true,

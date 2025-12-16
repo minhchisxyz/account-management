@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/api/currency_exchange_rate_api.dart';
 import 'package:flutter_mobile/api/transaction_api.dart';
 import 'package:flutter_mobile/widgets/monthly_summary_chart.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +14,8 @@ class YearPage extends StatefulWidget {
 }
 
 class _YearPageState extends State<YearPage> {
-  Future<Map<String, dynamic>>? _dataFuture;
+  // FIX: Future now only fetches a list of MonthTotal
+  late Future<List<MonthTotal>> _dataFuture;
 
   @override
   void initState() {
@@ -33,17 +33,16 @@ class _YearPageState extends State<YearPage> {
     }
   }
 
-  Future<Map<String, dynamic>> _fetchData() async {
-    final monthTotals = await TransactionAPI.fetchAllMonthTotals(widget.year);
-    final rate = await CurrencyExchangeRateAPI.fetchTodayRate();
-    return {'monthTotals': monthTotals, 'rate': rate};
+  // FIX: Simplified data fetching
+  Future<List<MonthTotal>> _fetchData() async {
+    return TransactionAPI.fetchAllMonthTotals(widget.year);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return FutureBuilder<Map<String, dynamic>>(
+    return FutureBuilder<List<MonthTotal>>(
       future: _dataFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -51,30 +50,28 @@ class _YearPageState extends State<YearPage> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: theme.colorScheme.error)));
         } else if (snapshot.hasData) {
-          final monthTotals = snapshot.data!['monthTotals'] as List<MonthTotal>;
-          final rate = snapshot.data!['rate'] as double;
+          final monthTotals = snapshot.data!;
           final euroFormat = NumberFormat.currency(locale: 'de_DE', symbol: '€');
           final vndFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
           final positiveColor = theme.brightness == Brightness.dark ? Colors.greenAccent : Colors.green.shade800;
           final negativeColor = theme.colorScheme.error;
 
-          // FIX: Added the SingleChildScrollView back to prevent overflow
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // --- CHARTS ---
                 Text('Monthly Summary (EUR)', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
+                // FIX: Removed the rate parameter
                 MonthlySummaryChart(monthTotals: monthTotals, currency: ChartCurrency.eur),
                 const SizedBox(height: 32),
                 Text('Monthly Summary (VND)', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
-                MonthlySummaryChart(monthTotals: monthTotals, currency: ChartCurrency.vnd, rate: rate),
+                // FIX: Removed the rate parameter
+                MonthlySummaryChart(monthTotals: monthTotals, currency: ChartCurrency.vnd),
                 const SizedBox(height: 32),
 
-                // --- TABLE ---
                 Text('Monthly Breakdown', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
                 ListView.separated(
@@ -84,7 +81,7 @@ class _YearPageState extends State<YearPage> {
                   itemBuilder: (context, index) {
                     final monthTotal = monthTotals[index];
                     final date = DateTime(widget.year, monthTotal.month);
-                    final totalColor = monthTotal.total.isNegative ? negativeColor : positiveColor;
+                    final totalColor = monthTotal.totalEUR.isNegative ? negativeColor : positiveColor;
                     return ListTile(
                       onTap: () => widget.onNavigateToMonth(monthTotal.month),
                       title: Text(
@@ -96,7 +93,7 @@ class _YearPageState extends State<YearPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            euroFormat.format(monthTotal.total),
+                            euroFormat.format(monthTotal.totalEUR),
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: totalColor,
                               fontWeight: FontWeight.bold,
@@ -104,7 +101,7 @@ class _YearPageState extends State<YearPage> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            vndFormat.format(monthTotal.total * rate),
+                            vndFormat.format(monthTotal.totalVND),
                             style: theme.textTheme.bodyMedium?.copyWith(color: totalColor.withOpacity(0.8)),
                           ),
                         ],

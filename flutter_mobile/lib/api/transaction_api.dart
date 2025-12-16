@@ -146,41 +146,47 @@ class TransactionAPI {
 
 class YearTotal {
   final int year;
-  final double total;
+  final double totalEUR;
+  final double totalVND;
 
-  const YearTotal({required this.year, required this.total});
+  const YearTotal({required this.year, required this.totalEUR, required this.totalVND});
 
   factory YearTotal.fromJson(Map<String, dynamic> json) {
     return YearTotal(
       year: int.parse(json['year'].toString()),
-      total: double.parse(json['total'].toString()),
+      totalEUR: double.parse(json['totalEUR'].toString()),
+      totalVND: double.parse(json['totalVND'].toString()),
     );
   }
 }
 
 class MonthTotal {
   final int month;
-  final double total;
+  final double totalEUR;
+  final double totalVND;
 
-  const MonthTotal({required this.month, required this.total});
+  const MonthTotal({required this.month, required this.totalEUR, required this.totalVND});
 
   factory MonthTotal.fromJson(Map<String, dynamic> json) {
     return MonthTotal(
       month: int.parse(json['month'].toString()),
-      total: double.parse(json['total'].toString()),
+      totalEUR: double.parse(json['totalEUR'].toString()),
+      totalVND: double.parse(json['totalVND'].toString()),
     );
   }
 }
 
 class Transaction {
   final int id;
-  final double amount;
+  final double amountEUR;
+  final double amountVND;
   final String description;
   final DateTime date;
 
   const Transaction({
     required this.id,
-    required this.amount,
+    required this.amountEUR,
+    required this.amountVND,
     required this.description,
     required this.date,
   });
@@ -188,7 +194,8 @@ class Transaction {
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
       id: int.parse(json['id'].toString()),
-      amount: double.parse(json['amount'].toString()),
+      amountEUR: double.parse(json['amountEUR'].toString()),
+      amountVND: double.parse(json['amountVND'].toString()),
       description: json['description'],
       date: DateTime.parse(json['date']),
     );
@@ -197,14 +204,16 @@ class Transaction {
 
 class GroupedByDateTransaction {
   final DateTime date;
-  final double total;
+  final double totalEUR;
+  final double totalVND;
 
-  const GroupedByDateTransaction({required this.date, required this.total});
+  const GroupedByDateTransaction({required this.date, required this.totalEUR, required this.totalVND});
 
   factory GroupedByDateTransaction.fromJson(Map<String, dynamic> json) {
     return GroupedByDateTransaction(
       date: DateTime.parse(json['date']),
-      total: double.parse(json['total'].toString()),
+      totalEUR: double.parse(json['totalEUR'].toString()),
+      totalVND: double.parse(json['totalVND'].toString()),
     );
   }
 }

@@ -8,9 +8,8 @@ enum ChartCurrency { eur, vnd }
 class MonthlySummaryChart extends StatelessWidget {
   final List<MonthTotal> monthTotals;
   final ChartCurrency currency;
-  final double? rate;
 
-  const MonthlySummaryChart({super.key, required this.monthTotals, required this.currency, this.rate});
+  const MonthlySummaryChart({super.key, required this.monthTotals, required this.currency});
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +23,11 @@ class MonthlySummaryChart extends StatelessWidget {
         ? NumberFormat.currency(locale: 'de_DE', symbol: '€')
         : NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
-    // Safely calculate min and max values
+    // Safely calculate min and max values using the new fields
     double maxVal = double.negativeInfinity;
     double minVal = double.infinity;
     for (var total in monthTotals) {
-      final value = currency == ChartCurrency.eur ? total.total : total.total * (rate ?? 1);
+      final value = currency == ChartCurrency.eur ? total.totalEUR : total.totalVND;
       if (value > maxVal) maxVal = value;
       if (value < minVal) minVal = value;
     }
@@ -55,7 +54,7 @@ class MonthlySummaryChart extends StatelessWidget {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 100, // Corrected typo
+                reservedSize: 100,
                 getTitlesWidget: (value, meta) => Text(format.format(value), style: theme.textTheme.bodySmall),
               ),
             ),
@@ -86,7 +85,8 @@ class MonthlySummaryChart extends StatelessWidget {
             LineChartBarData(
               spots: monthTotals.asMap().entries.map((entry) {
                 final index = entry.key;
-                final total = currency == ChartCurrency.eur ? entry.value.total : entry.value.total * (rate ?? 1);
+                // Use the new fields for the spot values
+                final total = currency == ChartCurrency.eur ? entry.value.totalEUR : entry.value.totalVND;
                 return FlSpot(index.toDouble(), total);
               }).toList(),
               isCurved: true,

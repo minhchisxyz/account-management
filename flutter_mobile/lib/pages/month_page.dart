@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/api/currency_exchange_rate_api.dart';
 import 'package:flutter_mobile/api/transaction_api.dart';
 import 'package:flutter_mobile/widgets/daily_summary_chart.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +15,7 @@ class MonthPage extends StatefulWidget {
 }
 
 class _MonthPageState extends State<MonthPage> {
-  Future<Map<String, dynamic>>? _dataFuture;
+  late Future<Map<String, dynamic>> _dataFuture;
 
   @override
   void initState() {
@@ -35,17 +34,14 @@ class _MonthPageState extends State<MonthPage> {
   }
 
   Future<Map<String, dynamic>> _fetchData() async {
-    // Fetch both sets of data in parallel
     final results = await Future.wait([
       TransactionAPI.fetchAllTransactions(widget.year, widget.month),
       TransactionAPI.fetchAllTransactionsGroupedByDate(widget.year, widget.month),
-      CurrencyExchangeRateAPI.fetchTodayRate(),
     ]);
 
     return {
       'transactions': results[0] as List<Transaction>,
       'groupedTransactions': results[1] as List<GroupedByDateTransaction>,
-      'rate': results[2] as double,
     };
   }
 
@@ -63,7 +59,6 @@ class _MonthPageState extends State<MonthPage> {
         } else if (snapshot.hasData) {
           final transactions = snapshot.data!['transactions'] as List<Transaction>;
           final groupedTransactions = snapshot.data!['groupedTransactions'] as List<GroupedByDateTransaction>;
-          final rate = snapshot.data!['rate'] as double;
           final euroFormat = NumberFormat.currency(locale: 'de_DE', symbol: '€');
           final vndFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
           final positiveColor = theme.brightness == Brightness.dark ? Colors.greenAccent : Colors.green.shade800;
@@ -74,17 +69,15 @@ class _MonthPageState extends State<MonthPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // --- CHARTS ---
                 Text('Daily Summary (EUR)', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
                 DailySummaryChart(groupedTransactions: groupedTransactions, currency: ChartCurrency.eur),
                 const SizedBox(height: 32),
                 Text('Daily Summary (VND)', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
-                DailySummaryChart(groupedTransactions: groupedTransactions, currency: ChartCurrency.vnd, rate: rate),
+                DailySummaryChart(groupedTransactions: groupedTransactions, currency: ChartCurrency.vnd),
                 const SizedBox(height: 32),
 
-                // --- TRANSACTION LIST ---
                 Text('Transactions', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
                 ListView.separated(
@@ -93,7 +86,7 @@ class _MonthPageState extends State<MonthPage> {
                   itemCount: transactions.length,
                   itemBuilder: (context, index) {
                     final transaction = transactions[index];
-                    final amountColor = transaction.amount.isNegative ? negativeColor : positiveColor;
+                    final amountColor = transaction.amountEUR.isNegative ? negativeColor : positiveColor;
                     return ListTile(
                       onTap: () => widget.onNavigateToEdit(transaction.id),
                       leading: CircleAvatar(
@@ -109,7 +102,7 @@ class _MonthPageState extends State<MonthPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            euroFormat.format(transaction.amount),
+                            euroFormat.format(transaction.amountEUR),
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: amountColor,
                               fontWeight: FontWeight.bold,
@@ -117,7 +110,7 @@ class _MonthPageState extends State<MonthPage> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            vndFormat.format(transaction.amount * rate),
+                            vndFormat.format(transaction.amountVND),
                             style: theme.textTheme.bodyMedium?.copyWith(color: amountColor.withOpacity(0.8)),
                           ),
                         ],

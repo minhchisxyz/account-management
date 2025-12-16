@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/api/currency_exchange_rate_api.dart';
 import 'package:flutter_mobile/api/transaction_api.dart';
 import 'package:flutter_mobile/widgets/yearly_summary_chart.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +13,7 @@ class AccountBalancePage extends StatefulWidget {
 }
 
 class _AccountBalancePageState extends State<AccountBalancePage> {
-  late Future<Map<String, dynamic>> _balanceFuture;
+  late Future<List<YearTotal>> _balanceFuture;
 
   @override
   void initState() {
@@ -22,17 +21,16 @@ class _AccountBalancePageState extends State<AccountBalancePage> {
     _balanceFuture = _fetchBalanceData();
   }
 
-  Future<Map<String, dynamic>> _fetchBalanceData() async {
-    final yearTotals = await TransactionAPI.fetchAllYearTotals();
-    final rate = await CurrencyExchangeRateAPI.fetchTodayRate();
-    return {'yearTotals': yearTotals, 'rate': rate};
+  Future<List<YearTotal>> _fetchBalanceData() async {
+    // Simplified data fetching
+    return TransactionAPI.fetchAllYearTotals();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return FutureBuilder<Map<String, dynamic>>(
+    return FutureBuilder<List<YearTotal>>(
       future: _balanceFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -40,10 +38,12 @@ class _AccountBalancePageState extends State<AccountBalancePage> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: theme.colorScheme.error)));
         } else if (snapshot.hasData) {
-          final yearTotals = snapshot.data!['yearTotals'] as List<YearTotal>;
-          final rate = snapshot.data!['rate'] as double;
-          final totalBalance = yearTotals.fold<double>(0, (sum, item) => sum + item.total);
-          final totalBalanceVND = totalBalance * rate;
+          final yearTotals = snapshot.data!;
+
+          // Updated calculations
+          final totalBalanceEUR = yearTotals.fold<double>(0, (sum, item) => sum + item.totalEUR);
+          final totalBalanceVND = yearTotals.fold<double>(0, (sum, item) => sum + item.totalVND);
+
           final euroFormat = NumberFormat.currency(locale: 'de_DE', symbol: '€');
           final vndFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
@@ -76,7 +76,7 @@ class _AccountBalancePageState extends State<AccountBalancePage> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        euroFormat.format(totalBalance),
+                        euroFormat.format(totalBalanceEUR),
                         style: theme.textTheme.headlineSmall?.copyWith(color: theme.colorScheme.onSurface),
                       ),
                       const SizedBox(height: 8),
@@ -96,7 +96,7 @@ class _AccountBalancePageState extends State<AccountBalancePage> {
                 // 3. Yearly Summary Chart (VND)
                 Text('Yearly Summary (VND)', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
-                YearlySummaryChart(yearTotals: yearTotals, currency: ChartCurrency.vnd, rate: rate),
+                YearlySummaryChart(yearTotals: yearTotals, currency: ChartCurrency.vnd),
               ],
             ),
           );
