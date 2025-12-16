@@ -5,18 +5,18 @@ import 'package:intl/intl.dart';
 
 enum ChartCurrency { eur, vnd }
 
-class MonthlySummaryChart extends StatelessWidget {
-  final List<MonthTotal> monthTotals;
+class DailySummaryChart extends StatelessWidget {
+  final List<GroupedByDateTransaction> groupedTransactions;
   final ChartCurrency currency;
   final double? rate;
 
-  const MonthlySummaryChart({super.key, required this.monthTotals, required this.currency, this.rate});
+  const DailySummaryChart({super.key, required this.groupedTransactions, required this.currency, this.rate});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    if (monthTotals.isEmpty) {
+    if (groupedTransactions.isEmpty) {
       return const SizedBox(height: 300, child: Center(child: Text('No data to display')));
     }
 
@@ -27,7 +27,7 @@ class MonthlySummaryChart extends StatelessWidget {
     // Safely calculate min and max values
     double maxVal = double.negativeInfinity;
     double minVal = double.infinity;
-    for (var total in monthTotals) {
+    for (var total in groupedTransactions) {
       final value = currency == ChartCurrency.eur ? total.total : total.total * (rate ?? 1);
       if (value > maxVal) maxVal = value;
       if (value < minVal) minVal = value;
@@ -55,7 +55,7 @@ class MonthlySummaryChart extends StatelessWidget {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 100, // Corrected typo
+                reservedSize: 90,
                 getTitlesWidget: (value, meta) => Text(format.format(value), style: theme.textTheme.bodySmall),
               ),
             ),
@@ -65,11 +65,11 @@ class MonthlySummaryChart extends StatelessWidget {
                 interval: 1,
                 getTitlesWidget: (value, meta) {
                   final index = value.toInt();
-                  if (index >= 0 && index < monthTotals.length) {
-                    final month = monthTotals[index].month;
+                  if (index >= 0 && index < groupedTransactions.length) {
+                    final date = groupedTransactions[index].date;
                     return SideTitleWidget(
                       axisSide: meta.axisSide,
-                      child: Text(DateFormat.MMM().format(DateTime(0, month)), style: theme.textTheme.bodySmall),
+                      child: Text(DateFormat.d().format(date), style: theme.textTheme.bodySmall),
                     );
                   }
                   return const Text('');
@@ -84,7 +84,7 @@ class MonthlySummaryChart extends StatelessWidget {
           maxY: maxY,
           lineBarsData: [
             LineChartBarData(
-              spots: monthTotals.asMap().entries.map((entry) {
+              spots: groupedTransactions.asMap().entries.map((entry) {
                 final index = entry.key;
                 final total = currency == ChartCurrency.eur ? entry.value.total : entry.value.total * (rate ?? 1);
                 return FlSpot(index.toDouble(), total);

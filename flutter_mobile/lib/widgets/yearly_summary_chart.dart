@@ -55,14 +55,14 @@ class YearlySummaryChart extends StatelessWidget {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 60,
+                reservedSize: 100,
                 getTitlesWidget: (value, meta) => Text(format.format(value), style: theme.textTheme.bodySmall),
               ),
             ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                interval: 1, // <-- THE FIX IS HERE
+                interval: 1, 
                 getTitlesWidget: (value, meta) {
                   final index = value.toInt();
                   if (index >= 0 && index < yearTotals.length) {

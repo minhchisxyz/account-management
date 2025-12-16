@@ -91,11 +91,44 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
   }
 
   Future<void> _deleteTransaction() async {
-    // ... (delete logic remains the same)
+    try {
+      await TransactionAPI.deleteTransaction(widget.transactionId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Transaction Deleted Successfully'), backgroundColor: Colors.green),
+      );
+      widget.onTransactionUpdated(); // Navigate back and refresh
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete transaction: $e'), backgroundColor: Colors.red),
+      );
+    }
   }
 
   void _showDeleteConfirmation() {
-    // ... (delete confirmation logic remains the same)
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: const Text('Are you sure you want to delete this transaction?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteTransaction();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -193,9 +226,26 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
             if (_isSubmitting)
               const Center(child: CircularProgressIndicator())
             else
-              ElevatedButton(
-                onPressed: _submitTransaction,
-                child: const Text('Update Transaction'),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _showDeleteConfirmation,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red),
+                      ),
+                      child: const Text('Delete'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _submitTransaction,
+                      child: const Text('Update'),
+                    ),
+                  ),
+                ],
               ),
           ],
         ),

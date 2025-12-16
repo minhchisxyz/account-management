@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class YearPage extends StatefulWidget {
   final int year;
-  final Function(int month) onNavigateToMonth; // Re-added callback
+  final Function(int month) onNavigateToMonth;
 
   const YearPage({super.key, required this.year, required this.onNavigateToMonth});
 
@@ -58,6 +58,7 @@ class _YearPageState extends State<YearPage> {
           final positiveColor = theme.brightness == Brightness.dark ? Colors.greenAccent : Colors.green.shade800;
           final negativeColor = theme.colorScheme.error;
 
+          // FIX: Added the SingleChildScrollView back to prevent overflow
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -77,15 +78,15 @@ class _YearPageState extends State<YearPage> {
                 Text('Monthly Breakdown', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 16),
                 ListView.separated(
-                  shrinkWrap: true, // Important inside a SingleChildScrollView
-                  physics: const NeverScrollableScrollPhysics(), // Important inside a SingleChildScrollView
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: monthTotals.length,
                   itemBuilder: (context, index) {
                     final monthTotal = monthTotals[index];
                     final date = DateTime(widget.year, monthTotal.month);
                     final totalColor = monthTotal.total.isNegative ? negativeColor : positiveColor;
                     return ListTile(
-                      onTap: () => widget.onNavigateToMonth(monthTotal.month), // Re-added tap functionality
+                      onTap: () => widget.onNavigateToMonth(monthTotal.month),
                       title: Text(
                         DateFormat.MMMM().format(date),
                         style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),

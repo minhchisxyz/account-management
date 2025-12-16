@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
           }
           break;
         case 'New Transaction':
-          _currentPage = NewTransactionPage(onTransactionCreated: _refreshData);
+          _currentPage = NewTransactionPage(onTransactionCreated: _refreshDataAndReturn);
           _title = 'New Transaction';
           break;
         case 'Edit Transaction':
@@ -139,22 +139,33 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _onNewTransaction() {
-    _navigateTo('New Transaction');
-  }
-
-  void _refreshData() {
+  Future<void> _refreshDataAndReturn() async {
     setState(() {
       _yearsFuture = TransactionAPI.fetchAllYears();
-      _navigateTo('Account Balance');
     });
-  }
 
-  void _refreshDataAndReturn() {
-    setState(() {
-      _yearsFuture = TransactionAPI.fetchAllYears();
-      _navigateTo(_activePageName, year: _activeYear, monthIndex: _activeMonth);
-    });
+    String destinationPage = _activePageName;
+    int? destinationYear = _activeYear;
+    int? destinationMonth = _activeMonth;
+
+    if (_activePageName == 'Month' && _activeYear != null && _activeMonth != null) {
+      final transactions = await TransactionAPI.fetchAllTransactions(_activeYear!, _activeMonth!);
+      if (transactions.isEmpty) {
+        destinationPage = 'Year';
+        destinationMonth = null;
+      }
+    }
+
+    if (destinationPage == 'Year' && destinationYear != null) {
+      final monthTotals = await TransactionAPI.fetchAllMonthTotals(destinationYear);
+      if (monthTotals.isEmpty) {
+        destinationPage = 'Account Balance';
+        destinationYear = null;
+        destinationMonth = null;
+      }
+    }
+
+    _navigateTo(destinationPage, year: destinationYear, monthIndex: destinationMonth);
   }
 
   @override
@@ -171,9 +182,13 @@ class _HomePageState extends State<HomePage> {
             toggleTheme: widget.toggleTheme,
             themeMode: widget.themeMode,
             onNavigate: (page, year) => _navigateTo(page, year: year),
-            onNewTransaction: _onNewTransaction,
+            onNewTransaction: () => _navigateTo('New Transaction'),
           ),
           body: _currentPage,
+          floatingActionButton: FloatingActionButton(
+            onPressed: _refreshDataAndReturn,
+            child: const Icon(Icons.refresh),
+          ),
         );
       },
     );

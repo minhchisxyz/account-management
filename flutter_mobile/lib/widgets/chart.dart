@@ -55,13 +55,12 @@ class RateChart extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
-                interval: 2, // <-- THE FIX IS HERE
+                interval: 2, 
                 getTitlesWidget: (value, meta) {
                   final index = value.toInt();
                   if (index >= 0 && index < rates.length) {
                     final date = rates[index].date;
-                    // Only show title for the specified interval
-                    if (value % meta.appliedInterval == 0) { // Use appliedInterval for robustness
+                    if (value % meta.appliedInterval == 0) {
                       return SideTitleWidget(
                         axisSide: meta.axisSide,
                         child: Text(
@@ -79,7 +78,7 @@ class RateChart extends StatelessWidget {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                   showTitles: true,
-                  reservedSize: 50,
+                  reservedSize: 80, // Increased from 50
                   interval: 100,
                   getTitlesWidget: (value, meta) {
                     return Text(value.toInt().toString(),
