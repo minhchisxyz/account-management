@@ -57,20 +57,6 @@ export async function fetchRate() {
   }
 }
 
-export async function fetchBalance() {
-  try {
-    console.log("Fetching balance...");
-    return (await prisma.transaction.aggregate({
-      _sum: {
-        amount: true
-      }
-    }))._sum.amount ?? 0
-  } catch (error) {
-    console.log('Database Error:', error);
-    throw new Error('Failed to fetch balance.');
-  }
-}
-
 export async function fetchAllRates(filter: string | null) {
   try {
     await getRate()
