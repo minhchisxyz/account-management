@@ -1,7 +1,12 @@
 import {GoogleGenAI} from "@google/genai";
 import {NextRequest, NextResponse} from "next/server";
 
-const MODEL = 'gemini-2.5-flash-lite'
+const MODELS = [
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite'
+]
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({
   apiKey: GEMINI_API_KEY
@@ -15,7 +20,7 @@ type Response = {
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-async function generateWithRetry(prompt: string, modelName: string, retries = 3) {
+async function generateWithRetry(prompt: string, modelName: string, retries = 2) {
   try {
     const response = await ai.models.generateContent({
       model: modelName,
@@ -24,19 +29,17 @@ async function generateWithRetry(prompt: string, modelName: string, retries = 3)
       },
       contents: `Today: ${new Date().toISOString()}. Extract the transaction {
       date: string in yyyy-MM-dd format,
-      description: string, 
+      description: string (description should be in the language of the text below),
       amount: number (also not that spending is negative and income positive)
       }
-       from this text: ${prompt}`,
+      (just return one transaction) from this text: ${prompt}`,
     })
     const jsonResponse: Response = JSON.parse(response.text || '{}')
-    console.log(jsonResponse)
     return jsonResponse
   } catch (error: any) {
-    // If it's a 503 (Overloaded) and we have retries left, wait and try again
     if (error?.status === 503 && retries > 0) {
       console.warn(`Model ${modelName} overloaded. Retrying... (${retries} attempts left)`);
-      await delay(1000); // Wait 1 second before retrying
+      await delay(1000);
       return generateWithRetry(prompt, modelName, retries - 1);
     }
     throw error;
@@ -49,26 +52,24 @@ export async function POST(request: NextRequest) {
       { status: 500 }
   )
   const { prompt } = await request.json()
-  try {
-    // 1. Try the primary model (Gemini 2.5) with retries
-    let response;
+
+  let lastError;
+
+  for (const modelName of MODELS) {
     try {
-      response = await generateWithRetry(prompt, MODEL);
-    } catch (primaryError: any) {
-      // 2. If Primary fails after retries, try Fallback (Gemini 1.5)
-      return NextResponse.json(
-          { error: 'Service currently unavailable. Please try again later.', code: "SERVICE_OVERLOADED" },
-          { status: 503 }
-      );
+      const response = await generateWithRetry(prompt, modelName);
+      console.log(`Response from ${modelName}:`, response);
+      return NextResponse.json(response);
+    } catch (error: any) {
+      console.warn(`Model ${modelName} failed after retries.`, error);
+      lastError = error;
+      // Continue to the next model
     }
-
-    return NextResponse.json(response);
-
-  } catch (error: any) {
-    console.error("All models failed:", error);
-    return NextResponse.json(
-        { error: 'Service currently unavailable. Please try again later.', code: "SERVICE_OVERLOADED" },
-        { status: 503 }
-    );
   }
+
+  console.error("All models failed:", lastError);
+  return NextResponse.json(
+      { error: 'Service currently unavailable. Please try again later.', code: "SERVICE_OVERLOADED" },
+      { status: 503 }
+  );
 }
