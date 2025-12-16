@@ -10,8 +10,6 @@ export default function proxy(request: NextRequest) {
     if (authHeader) {
       const authValue = authHeader.split(' ')[1];
       const [user, pwd] = atob(authValue).split(':');
-      console.log(user, USERNAME)
-      console.log(pwd, PASSWORD)
       if (user === USERNAME && pwd === PASSWORD) {
         return NextResponse.next();
       }
