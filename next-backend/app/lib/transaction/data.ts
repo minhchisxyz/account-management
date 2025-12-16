@@ -2,7 +2,7 @@
 import {GroupedTransactions, MonthTotal, Transaction, YearTotal} from "../definitions";
 import prisma from "../prisma";
 
-export async function getTransaction(id: number) {
+export async function getTransaction(id: number): Promise<Transaction | null> {
   try {
     console.log(`Fetching transaction ${id}...`)
     return await prisma.transaction.findUnique({
@@ -38,7 +38,7 @@ export async function editTransaction(id: number, value: number, description: st
         id: id
       },
       data: {
-        amount: value,
+        amountEUR: value,
         description: description,
         date: date
       }
@@ -49,17 +49,18 @@ export async function editTransaction(id: number, value: number, description: st
   }
 }
 
-export async function saveTransaction(amount: number, description: string, date: Date = new Date()) {
+export async function saveTransaction(amountEUR: number, amountVND: number, description: string, date: Date = new Date()) {
   try {
     console.log("Saving transaction...");
     const transaction = await prisma.transaction.create({
       data: {
-        amount: amount,
+        amountEUR: amountEUR,
+        amountVND: amountVND,
         description: description,
         date: date
       }
     })
-    console.log(`Saved transaction ${date.toISOString()} : ${amount}, ${description}`)
+    console.log(`Saved transaction ${date.toISOString()} : ${amountEUR}, ${description}`)
     return transaction
   } catch (error) {
     console.log('Database Error:', error);
@@ -73,7 +74,8 @@ export async function fetchYearTotals() {
     return await prisma.$queryRaw<YearTotal[]>`
             SELECT
                 EXTRACT(YEAR FROM date) AS year,
-                SUM(amount) AS total
+                SUM(amountEUR) AS totalEUR,
+                SUM(amountVND) AS totalVND,
             FROM "Transaction"
             GROUP BY EXTRACT(YEAR FROM date)
             ORDER BY year`
@@ -117,7 +119,8 @@ export async function fetchAllMonthTotals(year: number) {
     return await prisma.$queryRaw<MonthTotal[]>`
         SELECT
             EXTRACT(MONTH FROM date) AS month,
-            SUM(amount) AS total
+            SUM(amountEUR) AS totalEUR,
+            SUM(amountVND) AS totalVND,
         FROM "Transaction"
         WHERE EXTRACT(YEAR FROM date) = ${year}
         GROUP BY month
@@ -140,7 +143,8 @@ export async function fetchAllTransactionsOfMonth(year: number, month: number) {
       },
       select: {
         id: true,
-        amount: true,
+        amountEUR: true,
+        amountVND: true,
         description: true,
         date: true
       },
@@ -166,14 +170,16 @@ export async function fetchAllTransactionsOfMonthGroupByDate(year: number, month
         }
       },
       _sum: {
-        amount: true
+        amountEUR: true,
+        amountVND: true
       },
       orderBy: [{
         date: 'asc'
       }]
     })).map(group => ({
       date: group.date,
-      total: group._sum.amount ?? 0
+      totalEUR: group._sum.amountEUR ?? 0,
+      totalVND: group._sum.amountVND ?? 0
     })) as GroupedTransactions[]
   } catch (error) {
     console.log('Database Error:', error);

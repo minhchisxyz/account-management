@@ -2,6 +2,7 @@ import {saveTransaction} from "@/app/lib/transaction/data";
 import z from "zod";
 import {NextResponse} from "next/server";
 import {CreateTransactionSchema} from "@/app/lib/definitions";
+import {getRate} from "@/app/lib/currency/data";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -12,9 +13,11 @@ export async function POST(request: Request) {
   })
   if (validatedFields.success) {
     const { amount, date, description } = validatedFields.data
+    const rate = await getRate()
     return NextResponse.json(
         await saveTransaction(
             amount,
+            amount * rate,
             description,
             date ? new Date(date) : new Date()
         )

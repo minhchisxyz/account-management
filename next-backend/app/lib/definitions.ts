@@ -2,24 +2,28 @@ import z from "zod";
 
 export type YearTotal = {
   year: number,
-  total: number
+  totalEUR: number,
+  totalVND: number
 }
 
 export type MonthTotal = {
   month: number,
-  total: number
+  totalEUR: number,
+  totalVND: number
 }
 
 export type Transaction = {
   id: number,
   date: Date,
   description: string,
-  amount: number
+  amountEUR: number,
+  amountVND: number
 }
 
 export type GroupedTransactions = {
   date: Date,
-  total: number
+  totalEUR: number,
+  totalVND: number
 }
 
 export type CurrencyRate = {
