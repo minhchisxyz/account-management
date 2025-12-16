@@ -15,7 +15,8 @@ datasource db {
 
 model Transaction {
   id           Int      @id @default(autoincrement())
-  amount       Float
+  amountEUR    Float
+  amountVND    Float
   description  String
   date         DateTime @default(now())
   lastModified DateTime @updatedAt
