@@ -196,31 +196,27 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
               },
             ),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('Spending'),
-                Radio<TransactionType>(
-                  value: TransactionType.spending,
-                  groupValue: _transactionType,
-                  onChanged: (TransactionType? value) {
-                    setState(() {
-                      _transactionType = value!;
-                    });
-                  },
+            RadioGroup<TransactionType>(
+                groupValue: _transactionType,
+                onChanged: (TransactionType? value) {
+                  setState(() {
+                    _transactionType = value!;
+                  });
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text('Spending'),
+                    Radio<TransactionType>(
+                      value: TransactionType.spending
+                    ),
+                    const SizedBox(width: 20),
+                    const Text('Earning'),
+                    Radio<TransactionType>(
+                      value: TransactionType.earning
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 20),
-                const Text('Earning'),
-                Radio<TransactionType>(
-                  value: TransactionType.earning,
-                  groupValue: _transactionType,
-                  onChanged: (TransactionType? value) {
-                    setState(() {
-                      _transactionType = value!;
-                    });
-                  },
-                ),
-              ],
             ),
             const SizedBox(height: 30),
             if (_isSubmitting)

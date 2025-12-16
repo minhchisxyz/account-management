@@ -67,7 +67,7 @@ class MonthlySummaryChart extends StatelessWidget {
                   if (index >= 0 && index < monthTotals.length) {
                     final month = monthTotals[index].month;
                     return SideTitleWidget(
-                      axisSide: meta.axisSide,
+                      meta: meta,
                       child: Text(DateFormat.MMM().format(DateTime(0, month)), style: theme.textTheme.bodySmall),
                     );
                   }
@@ -96,7 +96,7 @@ class MonthlySummaryChart extends StatelessWidget {
               dotData: const FlDotData(show: true),
               belowBarData: BarAreaData(
                 show: true,
-                color: theme.colorScheme.primary.withOpacity(0.3),
+                color: theme.colorScheme.primary.withAlpha((255 * 0.3).round()),
               ),
             ),
           ],

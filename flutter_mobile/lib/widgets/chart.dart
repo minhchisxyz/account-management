@@ -55,14 +55,14 @@ class RateChart extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
-                interval: 2, 
+                interval: 1,
                 getTitlesWidget: (value, meta) {
                   final index = value.toInt();
                   if (index >= 0 && index < rates.length) {
                     final date = rates[index].date;
                     if (value % meta.appliedInterval == 0) {
                       return SideTitleWidget(
-                        axisSide: meta.axisSide,
+                        meta: meta,
                         child: Text(
                           DateFormat('dd').format(date),
                           style: theme.textTheme.bodySmall,
@@ -113,7 +113,10 @@ class RateChart extends StatelessWidget {
               belowBarData: BarAreaData(
                 show: true,
                 gradient: LinearGradient(
-                  colors: [theme.colorScheme.primary.withOpacity(0.3), theme.colorScheme.secondary.withOpacity(0.3)],
+                  colors: [
+                    theme.colorScheme.primary.withAlpha((255 * 0.3).round()),
+                    theme.colorScheme.secondary.withAlpha((255 * 0.3).round()),
+                  ],
                 ),
               ),
             ),

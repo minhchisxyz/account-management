@@ -102,7 +102,7 @@ class _YearPageState extends State<YearPage> {
                           const SizedBox(height: 2),
                           Text(
                             vndFormat.format(monthTotal.totalVND),
-                            style: theme.textTheme.bodyMedium?.copyWith(color: totalColor.withOpacity(0.8)),
+                            style: theme.textTheme.bodyMedium?.copyWith(color: totalColor.withAlpha((255 * 0.8).round())),
                           ),
                         ],
                       ),

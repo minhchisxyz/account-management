@@ -273,31 +273,29 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
               },
             ),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('Spending'),
-                Radio<TransactionType>(
-                  value: TransactionType.spending,
-                  groupValue: _transactionType,
-                  onChanged: (TransactionType? value) {
-                    setState(() {
-                      _transactionType = value!;
-                    });
-                  },
-                ),
-                const SizedBox(width: 20),
-                const Text('Earning'),
-                Radio<TransactionType>(
-                  value: TransactionType.earning,
-                  groupValue: _transactionType,
-                  onChanged: (TransactionType? value) {
-                    setState(() {
-                      _transactionType = value!;
-                    });
-                  },
-                ),
-              ],
+            RadioGroup<TransactionType>(
+              groupValue: _transactionType,
+              onChanged: (TransactionType? value) {
+                setState(() {
+                  _transactionType = value!;
+                });
+              },
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: RadioListTile<TransactionType>(
+                      title: const Text('Spending'),
+                      value: TransactionType.spending
+                    ),
+                  ),
+                  Expanded(
+                    child: RadioListTile<TransactionType>(
+                      title: const Text('Earning'),
+                      value: TransactionType.earning
+                    ),
+                  ),
+                ],
+              )
             ),
             const SizedBox(height: 30),
             if (_isSubmitting)

@@ -67,7 +67,7 @@ class DailySummaryChart extends StatelessWidget {
                   if (index >= 0 && index < groupedTransactions.length) {
                     final date = groupedTransactions[index].date;
                     return SideTitleWidget(
-                      axisSide: meta.axisSide,
+                      meta: meta,
                       child: Text(DateFormat.d().format(date), style: theme.textTheme.bodySmall),
                     );
                   }
@@ -95,7 +95,7 @@ class DailySummaryChart extends StatelessWidget {
               dotData: const FlDotData(show: true),
               belowBarData: BarAreaData(
                 show: true,
-                color: theme.colorScheme.primary.withOpacity(0.3),
+                color: theme.colorScheme.primary.withAlpha((255 * 0.3).round()),
               ),
             ),
           ],

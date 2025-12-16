@@ -90,7 +90,7 @@ class _MonthPageState extends State<MonthPage> {
                     return ListTile(
                       onTap: () => widget.onNavigateToEdit(transaction.id),
                       leading: CircleAvatar(
-                        backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                        backgroundColor: theme.colorScheme.primary.withAlpha((255 * 0.1).round()),
                         child: Text(
                           DateFormat('dd').format(transaction.date),
                           style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
@@ -111,7 +111,7 @@ class _MonthPageState extends State<MonthPage> {
                           const SizedBox(height: 2),
                           Text(
                             vndFormat.format(transaction.amountVND),
-                            style: theme.textTheme.bodyMedium?.copyWith(color: amountColor.withOpacity(0.8)),
+                            style: theme.textTheme.bodyMedium?.copyWith(color: amountColor.withAlpha((255 * 0.9).round())),
                           ),
                         ],
                       ),

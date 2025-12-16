@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
       ),
       radioTheme: RadioThemeData(
-        fillColor: MaterialStateProperty.all(Colors.white),
+        fillColor: WidgetStatePropertyAll(Colors.white),
       ),
     );
 

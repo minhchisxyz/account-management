@@ -66,7 +66,7 @@ class YearlySummaryChart extends StatelessWidget {
                   final index = value.toInt();
                   if (index >= 0 && index < yearTotals.length) {
                     return SideTitleWidget(
-                      axisSide: meta.axisSide,
+                      meta: meta,
                       child: Text(yearTotals[index].year.toString(), style: theme.textTheme.bodySmall),
                     );
                   }
@@ -95,7 +95,7 @@ class YearlySummaryChart extends StatelessWidget {
               dotData: const FlDotData(show: true),
               belowBarData: BarAreaData(
                 show: true,
-                color: theme.colorScheme.primary.withOpacity(0.3),
+                color: theme.colorScheme.primary.withAlpha((255 * 0.3).round()),
               ),
             ),
           ],

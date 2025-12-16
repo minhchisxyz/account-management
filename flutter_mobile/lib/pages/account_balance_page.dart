@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/api/transaction_api.dart';
@@ -60,7 +59,7 @@ class _AccountBalancePageState extends State<AccountBalancePage> {
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withAlpha((255 * 0.1).round()),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
