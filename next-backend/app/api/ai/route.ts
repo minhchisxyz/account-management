@@ -28,9 +28,9 @@ async function generateWithRetry(prompt: string, modelName: string, retries = 2)
         responseMimeType: 'application/json'
       },
       contents: `Today: ${new Date().toISOString()}. Extract the transaction {
-      date: string in yyyy-MM-dd format,
-      description: string (description should be in the language of the text below),
-      amount: number (also not that spending is negative and income positive)
+      date: string in yyyy-MM-dd format (default: today),
+      description: string (description should be in the language of the text below, default: ''),
+      amount: number (also not that spending is negative and income positive, default: 0)
       }
       (just return one transaction) from this text: ${prompt}`,
     })
