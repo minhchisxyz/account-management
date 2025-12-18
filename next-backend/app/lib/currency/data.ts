@@ -20,7 +20,7 @@ export async function getRate(): Promise<number> {
   }
   const json = await rates[0].json() as { Data: { currencyCode: string, transfer: number }[] };
   const rate = json.Data.filter(item => item.currencyCode === 'EUR')[0].transfer
-  await saveRate(rate)
+  await saveRate(Number(rate))
   return rate
 }
 
