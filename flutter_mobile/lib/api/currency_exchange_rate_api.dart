@@ -33,7 +33,9 @@ class CurrencyExchangeRateAPI {
     final response = await http.get(Uri.parse('$baseUrl?today=true'), headers: _headers);
 
     if (response.statusCode == 200) {
-      return double.parse(response.body);
+      // Decode as JSON first to handle cases where the body is a JSON-encoded string (e.g. "32123")
+      final dynamic data = json.decode(response.body);
+      return double.parse(data.toString());
     } else {
       throw Exception('Failed to load today\'s rate');
     }
