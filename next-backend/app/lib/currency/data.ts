@@ -29,10 +29,16 @@ export async function saveRate(rate: number) {
     console.log("Saving rate...")
     const date = new Date()
     date.setUTCHours(0, 0, 0, 0)
-    return await prisma.currencyExchangeRate.create({
-      data: {
-        date: date,
+    return await prisma.currencyExchangeRate.upsert({
+      where: {
+        date: date
+      },
+      update: {
         rate: Number(rate)
+      },
+      create: {
+        date: date,
+        rate: rate
       }
     })
   } catch (error) {
