@@ -173,6 +173,8 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 450; 
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
@@ -181,46 +183,102 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: TextFormField(
-                    controller: _voiceDescriptionController,
-                    readOnly: true,
-                    onTap: !_speechEnabled ? null : (_speechToText.isListening ? _stopListening : _startListening),
-                    decoration: InputDecoration(
-                      labelText: _speechToText.isListening
-                          ? 'Listening... (${_selectedLocale?.name ?? ''})'
-                          : (_speechEnabled ? 'Tap here to record' : 'Speech unavailable'),
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
-                        color: _speechToText.isNotListening ? Colors.grey : theme.colorScheme.primary,
-                        onPressed: !_speechEnabled ? null : (_speechToText.isListening ? _stopListening : _startListening),
+            // Responsive Voice Input Section
+            isSmallScreen 
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextFormField(
+                      controller: _voiceDescriptionController,
+                      readOnly: true,
+                      minLines: 3, // Initial multi-line height
+                      maxLines: null, // Expand automatically
+                      keyboardType: TextInputType.multiline,
+                      onTap: !_speechEnabled ? null : (_speechToText.isListening ? _stopListening : _startListening),
+                      decoration: InputDecoration(
+                        labelText: _speechToText.isListening
+                            ? 'Listening... (${_selectedLocale?.name ?? ''})'
+                            : (_speechEnabled ? 'Tap here to record' : 'Speech unavailable'),
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
+                          color: _speechToText.isNotListening ? Colors.grey : theme.colorScheme.primary,
+                          onPressed: !_speechEnabled ? null : (_speechToText.isListening ? _stopListening : _startListening),
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    if (_speechEnabled && _locales.isNotEmpty)
+                      DropdownButtonFormField<LocaleName>(
+                        value: _selectedLocale,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                        ),
+                        onChanged: (LocaleName? newValue) {
+                          setState(() {
+                            _selectedLocale = newValue!;
+                          });
+                        },
+                        items: _locales.map<DropdownMenuItem<LocaleName>>((LocaleName value) {
+                          return DropdownMenuItem<LocaleName>(
+                            value: value,
+                            child: Text(value.name, style: theme.textTheme.bodySmall),
+                          );
+                        }).toList(),
+                      ),
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.center, // Vertically center items
+                  children: <Widget>[
+                    Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        controller: _voiceDescriptionController,
+                        readOnly: true,
+                        minLines: 3, // Initial multi-line height
+                        maxLines: null, // Expand automatically
+                        keyboardType: TextInputType.multiline,
+                        onTap: !_speechEnabled ? null : (_speechToText.isListening ? _stopListening : _startListening),
+                        decoration: InputDecoration(
+                          labelText: _speechToText.isListening
+                              ? 'Listening... (${_selectedLocale?.name ?? ''})'
+                              : (_speechEnabled ? 'Tap here to record' : 'Speech unavailable'),
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
+                            color: _speechToText.isNotListening ? Colors.grey : theme.colorScheme.primary,
+                            onPressed: !_speechEnabled ? null : (_speechToText.isListening ? _stopListening : _startListening),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    if (_speechEnabled && _locales.isNotEmpty)
+                      Expanded(
+                        flex: 1,
+                        child: DropdownButtonFormField<LocaleName>(
+                          value: _selectedLocale,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                          ),
+                          onChanged: (LocaleName? newValue) {
+                            setState(() {
+                              _selectedLocale = newValue!;
+                            });
+                          },
+                          items: _locales.map<DropdownMenuItem<LocaleName>>((LocaleName value) {
+                            return DropdownMenuItem<LocaleName>(
+                              value: value,
+                              child: Text(value.name, style: theme.textTheme.bodySmall, overflow: TextOverflow.ellipsis),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                if (_speechEnabled && _locales.isNotEmpty)
-                  DropdownButton<LocaleName>(
-                    value: _selectedLocale,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    onChanged: (LocaleName? newValue) {
-                      setState(() {
-                        _selectedLocale = newValue!;
-                      });
-                    },
-                    items: _locales.map<DropdownMenuItem<LocaleName>>((LocaleName value) {
-                      return DropdownMenuItem<LocaleName>(
-                        value: value,
-                        child: Text(value.name, style: theme.textTheme.bodySmall),
-                      );
-                    }).toList(),
-                  ),
-              ],
-            ),
             const SizedBox(height: 12),
             if (_isConverting)
               const Center(child: Padding(

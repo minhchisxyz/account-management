@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-
-class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
+class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback toggleTheme;
   final ThemeMode themeMode;
   final String title;
-
   final List<int> years;
   final void Function(String, int?) onNavigate;
   final VoidCallback onNewTransaction;
@@ -21,26 +20,62 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
+  State<MyAppBar> createState() => _MyAppBarState();
+
+  @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _MyAppBarState extends State<MyAppBar> {
+  bool _isMenuOpen = false;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title),
+      title: Text(widget.title),
       actions: [
         IconButton(
-          onPressed: toggleTheme,
-          icon: Icon(themeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode),
+          onPressed: widget.toggleTheme,
+          icon: Icon(widget.themeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode),
         ),
         PopupMenuButton<String>(
-          icon: const Icon(Icons.menu),
+          icon: AnimatedRotation(
+            turns: _isMenuOpen ? 0.25 : 0, // 90 degrees rotation
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return ScaleTransition(scale: animation, child: child);
+              },
+              child: Icon(
+                _isMenuOpen ? Icons.close : Icons.menu,
+                key: ValueKey<bool>(_isMenuOpen), // Key is required for AnimatedSwitcher
+              ),
+            ),
+          ),
+          position: PopupMenuPosition.under,
+          onOpened: () {
+            HapticFeedback.lightImpact(); // Subtle physical feedback
+            setState(() {
+              _isMenuOpen = true;
+            });
+          },
+          onCanceled: () {
+            setState(() {
+              _isMenuOpen = false;
+            });
+          },
           onSelected: (value) {
+            setState(() {
+              _isMenuOpen = false;
+            });
             if (value == 'New Transaction') {
-              onNewTransaction();
+              widget.onNewTransaction();
             } else if (value == 'Account Balance' || value == 'Rates') {
-              onNavigate(value, null);
+              widget.onNavigate(value, null);
             } else {
-              onNavigate('Year', int.parse(value));
+              widget.onNavigate('Year', int.parse(value));
             }
           },
           itemBuilder: (BuildContext context) {
@@ -58,7 +93,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Text('New Transaction'),
               ),
               const PopupMenuDivider(),
-              ...years.map((year) {
+              ...widget.years.map((year) {
                 return PopupMenuItem<String>(
                   value: year.toString(),
                   child: Text(year.toString()),
