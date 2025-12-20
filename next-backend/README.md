@@ -1,40 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# Next.js Backend API
 
-## Getting Started
+This is the backend API server for the Account Management application, specifically designed to work with the Flutter Mobile application.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+*   **AI Transaction Extraction:** Uses Google Gemini models to extract transaction details from text.
+*   **Currency Exchange Rates:** Provides exchange rate data.
+*   **Transactions Management:** API for managing transactions.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/route.ts`. The page auto-updates as you edit the file.
+1.  **Navigate to the directory:**
+    ```bash
+    cd next-backend
+    ```
 
-## Learn More
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+3.  **Environment Variables:**
+    Create a `.env` file in the root of the `next-backend` directory with the following content:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    ```dotenv
+    VCB_URL="https://www.vietcombank.com.vn/api/exchangerates?date="
+    DATABASE_URL="postgres://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
+    GEMINI_API_KEY="your_gemini_api_key"
+    USER_NAME="your_username"
+    PASSWORD="your_password"
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4.  **Run the server:**
+    ```bash
+    npm run dev
+    ```
+    The server will start on `http://localhost:3000`.
 
-## Deploy on Vercel
+## API Endpoints
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+*   `POST /api/ai`: Extract transaction from text.
+*   `GET /api/rates`: Get exchange rates.
+*   `GET /api/transactions`: Get transactions.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Relation to Flutter App
 
-## API Routes
+This backend serves as the API for the `flutter_mobile` application. Ensure this server is running and accessible (e.g., via local network IP if testing on a physical device) for the mobile app to function correctly.
 
-This directory contains example API routes for the headless API app.
-
-For more details, see [route.js file convention](https://nextjs.org/docs/app/api-reference/file-conventions/route).

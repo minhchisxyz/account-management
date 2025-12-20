@@ -45,8 +45,8 @@ A modern, full-featured personal finance and transaction management application 
 ```dart
 class Env {
   static const String baseUrl = 'YOUR_DEPLOYED_BACKEND_URL'; // e.g., https://your-account-backend.com
-  static const String username = 'YOUR_API_USERNAME';
-  static const String password = 'YOUR_API_PASSWORD';
+  static const String username = 'YOUR_API_USERNAME'; // must be the same as USER_NAME in next-backend/.env
+  static const String password = 'YOUR_API_PASSWORD'; // must be the same as PASSWORD in next-backend/.env
 }
 ```
 
