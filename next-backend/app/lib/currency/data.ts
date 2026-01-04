@@ -4,8 +4,19 @@ import prisma from "../prisma";
 
 const BASE_URL = `${process.env.VCB_URL as string}`
 
-export async function getRate(): Promise<number> {
-  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+export async function getRate(dateStr?: string): Promise<number> {
+  if (dateStr) {
+    const date = new Date(dateStr)
+    date.setUTCHours(0, 0, 0, 0)
+    const rate = await prisma.currencyExchangeRate.findFirst({
+      where: {
+        date: date
+      }
+    })
+    if (!rate) throw new Error('Rate not found')
+    return rate.rate
+  }
+  const today = new Date().toISOString().slice(0, 10)
   const rates = await Promise.all([
     fetch(`${BASE_URL}${today}`),
     fetchRate()

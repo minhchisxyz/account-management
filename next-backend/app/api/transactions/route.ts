@@ -13,7 +13,17 @@ export async function POST(request: Request) {
   })
   if (validatedFields.success) {
     const { amount, date, description } = validatedFields.data
-    const rate = await getRate()
+    const inputDate = new Date(date)
+    const today = new Date()
+    inputDate.setHours(0, 0, 0, 0)
+    today.setHours(0, 0, 0, 0)
+    if (inputDate > today) {
+      return NextResponse.json(
+          { error: 'Date not valid (cannot be in the future)', code: "INVALID_INPUT" },
+          { status: 400 }
+      )
+    }
+    const rate = await getRate(date)
     return NextResponse.json(
         await saveTransaction(
             amount,
