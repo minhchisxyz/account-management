@@ -40,7 +40,6 @@ async function generateWithRetry(prompt: string, modelName: string, fileType: st
         data: prompt
       })
     }
-    console.log(contents)
     const response = await ai.models.generateContent({
       model: modelName,
       config: {
