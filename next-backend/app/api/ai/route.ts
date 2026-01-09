@@ -2,11 +2,11 @@ import {GoogleGenAI} from "@google/genai";
 import {NextRequest, NextResponse} from "next/server";
 
 const MODELS = [
-    'gemini-3-flash-preview',
-    'gemini-2.5-flash',
-    'gemini-2.5-flash-lite',
-    'gemini-2.0-flash',
-    'gemini-2.0-flash-lite'
+  'gemini-3-flash-preview',
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite'
 ]
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({
@@ -38,8 +38,8 @@ async function generateWithRetry(prompt: string, modelName: string, retries = 2)
     const jsonResponse: Response = JSON.parse(response.text || '{}')
     return jsonResponse
   } catch (error: any) {
-    if (error?.status === 503 && retries > 0) {
-      console.warn(`Model ${modelName} overloaded. Retrying... (${retries} attempts left)`);
+    if (retries > 0) {
+      console.warn(`Model ${modelName} failed. Retrying... (${retries} attempts left)`);
       await delay(1000);
       return generateWithRetry(prompt, modelName, retries - 1);
     }
@@ -49,8 +49,8 @@ async function generateWithRetry(prompt: string, modelName: string, retries = 2)
 
 export async function POST(request: NextRequest) {
   if (!GEMINI_API_KEY) return NextResponse.json(
-      { error: 'No API Key provided', code: "INVALID_CONFIG" },
-      { status: 500 }
+    { error: 'No API Key provided', code: "INVALID_CONFIG" },
+    { status: 500 }
   )
   const { prompt } = await request.json()
 
@@ -70,7 +70,8 @@ export async function POST(request: NextRequest) {
 
   console.error("All models failed:", lastError);
   return NextResponse.json(
-      { error: 'Service currently unavailable. Please try again later.', code: "SERVICE_OVERLOADED" },
-      { status: 503 }
+    { error: 'Service currently unavailable. Please try again later.', code: "SERVICE_OVERLOADED" },
+    { status: 503 }
   );
 }
+

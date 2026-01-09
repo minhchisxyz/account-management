@@ -1,5 +1,5 @@
 
-import {GroupedTransactions, MonthTotal, Transaction, YearTotal} from "../definitions";
+import {GroupedTransactions, MonthlyTotal, Transaction, YearlyTotal} from "../definitions";
 import prisma from "../prisma";
 
 export async function getTransaction(id: number): Promise<Transaction | null> {
@@ -71,7 +71,7 @@ export async function saveTransaction(amountEUR: number, amountVND: number, desc
 export async function fetchYearTotals() {
   try {
     console.log("Fetching year totals...");
-    return await prisma.$queryRaw<YearTotal[]>`
+    return await prisma.$queryRaw<YearlyTotal[]>`
             SELECT
                 EXTRACT(YEAR FROM date) AS year,
                 SUM("amountEUR") AS "totalEUR",
@@ -116,7 +116,7 @@ export async function fetchAllMonths(year: number) {
 export async function fetchAllMonthTotals(year: number) {
   try {
     console.log(`Fetching all months for year ${year}...`);
-    return await prisma.$queryRaw<MonthTotal[]>`
+    return await prisma.$queryRaw<MonthlyTotal[]>`
         SELECT
             EXTRACT(MONTH FROM date) AS month,
             SUM("amountEUR") AS "totalEUR",

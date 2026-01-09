@@ -20,6 +20,22 @@ This is the backend API server for the Account Management application, specifica
     npm install
     ```
 
+3.  **Configure Environment Variables:**
+    Create a `.env` file in the root of the `next-backend` directory and add the following entries:
+
+    ```env
+    VCB_URL="https://www.vietcombank.com.vn/api/exchangerates?date="
+    DATABASE_URL="postgresql://username:password@localhost:5432/database_name"
+    GEMINI_API_KEY="your_gemini_api_key_here"
+    USER_NAME="your_username"
+    PASSWORD="your_password"
+    ```
+
+4.  **Start the server:**
+    ```bash
+    npm run dev
+    ```
+
 3.  **Environment Variables:**
     Create a `.env` file in the root of the `next-backend` directory with the following content:
 

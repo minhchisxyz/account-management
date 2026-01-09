@@ -1,13 +1,19 @@
 import z from "zod";
 
-export type YearTotal = {
+export type YearlyTotal = {
   year: number,
   totalEUR: number,
   totalVND: number
 }
 
-export type MonthTotal = {
+export type MonthlyTotal = {
   month: number,
+  totalEUR: number,
+  totalVND: number
+}
+
+export type MonthlyTotalWithMonthName = {
+  month: string,
   totalEUR: number,
   totalVND: number
 }
@@ -36,8 +42,25 @@ const TransactionSchema = z.object({
   amount: z.coerce
       .number(),
   date: z.string(),
-  description: z.string().min(1, { message: "Description is required" })
+  description: z.string().min(1, { message: "Description is required" }),
+  type: z.enum(["income", "expense"]).optional()
 });
 
+export type SessionPayload = {
+  username: string,
+  expiresAt: Date
+}
+export const SignInSchema = z.object({
+  username: z.string().min(1, { message: "Username is required" }),
+  password: z.string().min(1, { message: "Password is required" })
+})
 export const CreateTransactionSchema = TransactionSchema.omit({ id: true })
 export const UpdateTransactionSchema = TransactionSchema.omit({ id: true })
+
+export type SignInState = {
+  error: string
+} | undefined
+
+export type CreateTransactionState = {
+  error: string
+} | undefined

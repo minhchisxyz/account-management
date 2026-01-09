@@ -74,7 +74,7 @@ export async function fetchRate() {
   }
 }
 
-export async function fetchAllRates(filter: string | null) {
+export async function fetchAllRates(filter?: string | null) {
   try {
     await getRate()
     if (filter) {
