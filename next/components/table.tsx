@@ -66,7 +66,7 @@ export function TransactionsTable({
                 <td className="px-2 py-3">
                   <div className="flex items-center justify-center">
                     <Link
-                        href={`/transactions?id=${t.id}&value=${t.amountEUR}&description=${t.description}&date=${t.isoDate}`}
+                        href={`/transactions?id=${t.id}&amount=${t.amountEUR}&description=${t.description}&date=${t.isoDate}`}
                         className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                     >
                       <SquarePen className="h-4 w-4" />

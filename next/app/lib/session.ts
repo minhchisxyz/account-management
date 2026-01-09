@@ -35,13 +35,22 @@ export async function generateAccessToken(payload: SessionPayload) {
 }
 
 export async function generateRefreshToken(payload: SessionPayload) {
-  return encrypt(payload, '7d')
+  return encrypt(payload, '2d')
+}
+
+export async function validateRefreshToken(token: string | undefined) {
+  if (!token) return null
+  const [payload, dbToken] = await Promise.all([
+      decrypt(token),
+      prisma.refreshToken.findFirst({where: {token}})
+  ])
+  return payload && dbToken ? token : null
 }
 
 export async function createSession(user: { id: number, username: string }) {
   const cookieStore = await cookies()
   const accessExpires = new Date(Date.now() + 15 * 60 * 1000)
-  const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  const refreshExpires = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
   const [accessToken, refreshToken] = await Promise.all([
     generateAccessToken({username: user.username, expiresAt: accessExpires}),
     generateRefreshToken({username: user.username, expiresAt: refreshExpires})
@@ -77,7 +86,7 @@ export async function refreshSession(oldRefreshToken: string) {
     })
     if (user) {
       await Promise.all([
-        prisma.refreshToken.deleteMany({where: {token: oldRefreshToken}}),
+        prisma.refreshToken.deleteMany({where: {userId: user.id}}),
         createSession(user)
       ])
     }

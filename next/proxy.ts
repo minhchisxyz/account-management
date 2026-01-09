@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import bcrypt from "bcrypt";
 import {cookies} from "next/headers";
-import {decrypt, refreshSession} from "@/app/lib/session";
+import {decrypt, refreshSession, validateRefreshToken} from "@/app/lib/session";
 
 const USERNAME = process.env.USER_NAME
 const PASSWORD = process.env.PASSWORD
@@ -34,9 +34,9 @@ export default async function proxy(request: NextRequest) {
     const accessPayload = await decrypt(accessToken)
     if (!accessPayload) {
       const refreshToken = cookieStore.get('refreshToken')?.value
-      const refreshPayload = await decrypt(refreshToken)
-      if (!refreshPayload || !refreshToken) return NextResponse.redirect(new URL('/login', request.nextUrl))
-      await refreshSession(refreshToken)
+      const validatedToken = await validateRefreshToken(refreshToken)
+      if (!validatedToken) return NextResponse.redirect(new URL('/login', request.nextUrl))
+      await refreshSession(validatedToken)
       return NextResponse.next()
     }
   }

@@ -6,6 +6,7 @@ This is the main Next.js fullstack application for Account Management. It provid
 
 *   **Web Interface:** Complete UI for adding, viewing, editing, and removing transactions.
 *   **AI Transaction Extraction:** Uses Google Gemini models to extract transaction details from text.
+*   **Voice Transaction Entry:** Support voice recording and translating into transaction by using Web Speech API or gemini API.
 *   **Currency Exchange Rates:** Real-time exchange rate tracking between EUR and VND.
 *   **Mobile API:** backend services for the paired Flutter mobile app.
 
