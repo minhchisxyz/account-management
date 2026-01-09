@@ -1,8 +1,22 @@
 
-import {GroupedTransactions, MonthTotal, Transaction, YearTotal} from "../definitions";
+import {GroupedTransactions, MonthlyTotal, Transaction, YearlyTotal} from "../definitions";
 import prisma from "../prisma";
 
-export async function removeTransaction(id: number) {
+export async function getTransaction(id: number): Promise<Transaction | null> {
+  try {
+    console.log(`Fetching transaction ${id}...`)
+    return await prisma.transaction.findUnique({
+      where: {
+        id: id
+      }
+    })
+  } catch (error) {
+    console.log('Database Error:', error);
+    throw new Error(`Failed to fetch transaction ${id}.`);
+  }
+}
+
+export async function deleteTransaction(id: number) {
   try {
     console.log("Deleting transaction...");
     await prisma.transaction.delete({
@@ -19,12 +33,12 @@ export async function removeTransaction(id: number) {
 export async function editTransaction(id: number, value: number, description: string, date: Date = new Date()) {
   try {
     console.log("Editing transaction...");
-    await prisma.transaction.update({
+    return await prisma.transaction.update({
       where: {
         id: id
       },
       data: {
-        amount: value,
+        amountEUR: value,
         description: description,
         date: date
       }
@@ -35,17 +49,19 @@ export async function editTransaction(id: number, value: number, description: st
   }
 }
 
-export async function saveTransaction(value: number, description: string, date: Date = new Date()) {
+export async function saveTransaction(amountEUR: number, amountVND: number, description: string, date: Date = new Date()) {
   try {
     console.log("Saving transaction...");
-    await prisma.transaction.create({
+    const transaction = await prisma.transaction.create({
       data: {
-        amount: value,
+        amountEUR: amountEUR,
+        amountVND: amountVND,
         description: description,
         date: date
       }
     })
-    console.log(`Saved transaction ${date.toISOString()} : ${value}, ${description}`)
+    console.log(`Saved transaction ${date.toISOString()} : ${amountEUR}, ${description}`)
+    return transaction
   } catch (error) {
     console.log('Database Error:', error);
     throw new Error('Failed to save transaction.');
@@ -55,10 +71,11 @@ export async function saveTransaction(value: number, description: string, date: 
 export async function fetchYearTotals() {
   try {
     console.log("Fetching year totals...");
-    return await prisma.$queryRaw<YearTotal[]>`
+    return await prisma.$queryRaw<YearlyTotal[]>`
             SELECT
                 EXTRACT(YEAR FROM date) AS year,
-                SUM(amount) AS total
+                SUM("amountEUR") AS "totalEUR",
+                SUM("amountVND") AS "totalVND"
             FROM "Transaction"
             GROUP BY EXTRACT(YEAR FROM date)
             ORDER BY year`
@@ -99,10 +116,11 @@ export async function fetchAllMonths(year: number) {
 export async function fetchAllMonthTotals(year: number) {
   try {
     console.log(`Fetching all months for year ${year}...`);
-    return await prisma.$queryRaw<MonthTotal[]>`
+    return await prisma.$queryRaw<MonthlyTotal[]>`
         SELECT
             EXTRACT(MONTH FROM date) AS month,
-            SUM(amount) AS total
+            SUM("amountEUR") AS "totalEUR",
+            SUM("amountVND") AS "totalVND"
         FROM "Transaction"
         WHERE EXTRACT(YEAR FROM date) = ${year}
         GROUP BY month
@@ -125,9 +143,13 @@ export async function fetchAllTransactionsOfMonth(year: number, month: number) {
       },
       select: {
         id: true,
-        amount: true,
+        amountEUR: true,
+        amountVND: true,
         description: true,
         date: true
+      },
+      orderBy: {
+        date: 'desc'
       }
     }) as Transaction[]
   } catch (error) {
@@ -148,14 +170,16 @@ export async function fetchAllTransactionsOfMonthGroupByDate(year: number, month
         }
       },
       _sum: {
-        amount: true
+        amountEUR: true,
+        amountVND: true
       },
       orderBy: [{
         date: 'asc'
       }]
     })).map(group => ({
       date: group.date,
-      total: group._sum.amount ?? 0
+      totalEUR: group._sum.amountEUR ?? 0,
+      totalVND: group._sum.amountVND ?? 0
     })) as GroupedTransactions[]
   } catch (error) {
     console.log('Database Error:', error);

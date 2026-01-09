@@ -1,63 +1,56 @@
 'use server'
 
-import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
-import z from "zod"
-import {editTransaction, removeTransaction, saveTransaction} from "./data";
-import {getMonthName} from "../formatterService";
-
-const TransactionSchema = z.object({
-    id: z.string(),
-    value: z.coerce
-        .number(),
-    date: z.string(),
-    description: z.string().min(1, { message: "Description is required" }),
-    type: z.string()
-});
-
-const CreateTransactionSchema = TransactionSchema.omit({ id: true })
-const UpdateTransactionSchema = TransactionSchema.omit({ id: true })
+import {addTransaction} from "@/app/lib/transaction/helper";
+import { UpdateTransactionSchema} from "@/app/lib/definitions";
+import {revalidatePath} from "next/cache";
+import {deleteTransaction, editTransaction} from "@/app/lib/transaction/data";
+import {getMonthName} from "@/app/lib/formatterService";
+import {redirect} from "next/navigation";
+import prisma from "@/app/lib/prisma";
 
 export async function createTransaction(formData: FormData) {
-  const validatedFields = CreateTransactionSchema.safeParse({
-    value: formData.get("value"),
+  const type = formData.get('type') as string
+  if (type !== 'income' && type !== 'expense') return false
+  const amount = parseFloat(formData.get('amount') as string ?? 0)
+  const res = await addTransaction({
+    amount: type === 'income' ? amount : -amount,
+    description: formData.get('description') as string ?? '',
+    date: formData.get('date') as string ?? new Date().toISOString()
+  })
+  return res !== null
+}
+
+export async function updateTransaction(id: number, formData: FormData) {
+  const validatedFields = UpdateTransactionSchema.safeParse({
+    amount: formData.get("amount"),
     date: formData.get("date"),
     description: formData.get("description"),
     type: formData.get("type")
   })
   if (validatedFields.success) {
-    const { value, date, description, type } = validatedFields.data
-    await saveTransaction(
-        type === "income" ? value : -value,
-        description,
-        date ? new Date(date) : new Date())
-  }
-}
-
-export async function updateTransaction(id: number, formData: FormData) {
-  const validatedFields = UpdateTransactionSchema.safeParse({
-      value: formData.get("value"),
-      date: formData.get("date"),
-      description: formData.get("description"),
-      type: formData.get("type")
-  })
-  if (validatedFields.success) {
-    const { value, date, description, type } = validatedFields.data
+    const { amount, date, description, type } = validatedFields.data
     const updatedDate = date ? new Date(date) : new Date()
     await editTransaction(
         id,
-        type === "income" ? value : -value,
+        type === "income" ? amount : -amount,
         description,
-        updatedDate)
-    const path = `/account-management/years/${updatedDate.getFullYear()}/months/${getMonthName(updatedDate.getMonth() + 1)}`
+        updatedDate
+    )
+    const path = `/years/${updatedDate.getFullYear()}/months/${getMonthName(updatedDate.getMonth() + 1)}`
     revalidatePath(path)
-    redirect(path)
+    return path
   }
 }
 
-export async function deleteTransaction(id: number, month: string, year: number) {
-    await removeTransaction(id)
-    const path = `/account-management/years/${year}/months/${month}`
-    revalidatePath(path)
-    redirect(path)
+export async function removeTransaction(id: number | string) {
+  const transaction = await prisma.transaction.findUnique({where: {id: Number(id)}})
+  if (!transaction) {
+    console.error(`Transaction ${id} not found`)
+    return
+  }
+  const date = new Date(transaction.date)
+  await deleteTransaction(Number(id))
+  const path = `/years/${date.getFullYear()}/months/${getMonthName(date.getMonth() + 1)}`
+  revalidatePath(path)
+  redirect(path)
 }

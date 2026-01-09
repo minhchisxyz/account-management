@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Transaction" ADD COLUMN     "amountVND" DOUBLE PRECISION NOT NULL DEFAULT 0;

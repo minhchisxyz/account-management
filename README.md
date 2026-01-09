@@ -4,9 +4,9 @@ This application provides real-time currency exchange rates between EUR and VND,
 
 ## Project Structure
 
-There are three versions of the application:
+The application has evolved into the following structure:
 
 1. **spring-angular**: Contains a Spring Boot backend and an Angular frontend.
-2. **next**: A Next.js full-stack application.
-3. **next-backend** & **flutter_mobile**: A Next.js API server (`next-backend`) paired with a Flutter mobile application (`flutter_mobile`).
+2. **next**: The main Next.js fullstack application. It provides both the web interface and the API for the mobile application.
+3. **flutter_mobile**: A Flutter mobile application that consumes the API from `next-backend`.
 

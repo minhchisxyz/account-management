@@ -1,1 +1,0 @@
-ALTER TABLE "Transaction" RENAME COLUMN "amount" TO "amountEUR";
