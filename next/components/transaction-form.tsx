@@ -65,7 +65,7 @@ export default function TransactionForm({
       <FieldSet>
         <FieldGroup>
           <Field>
-            <FieldLabel>Transcript your voice to a transaction</FieldLabel>
+            <FieldLabel>Translate voice to a transaction</FieldLabel>
             <VoiceRecorder/>
           </Field>
           <Field>
