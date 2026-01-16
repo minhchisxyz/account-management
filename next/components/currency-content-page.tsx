@@ -15,12 +15,12 @@ export default function CurrencyContentPage({rates}: {
   const activeClass = `shadow-none inset-shadow-[-4px_4px_8px_#cccccc,4px_-4px_6px_#ffffff]`
   const focusClass = `focus:shadow-none focus:inset-shadow-[4px_4px_8px_#cccccc,-4px_-4px_6px_#ffffff] focus:outline-none`
   const [filter, setFilter] = useState(7)
-  const day = 1000 * 60 * 60 * 24
   const filteredRates = useMemo(() => {
-      if (filter === 0) return rates
-      const today = new Date()
-      return rates.filter(r => today.getTime() - r.date.getTime() <= day * filter)
-  }, [filter, rates, day])
+    if (filter === 0) return rates
+    const day = 1000 * 60 * 60 * 24
+    const today = new Date()
+    return rates.filter(r => today.getTime() - r.date.getTime() <= day * filter)
+  }, [filter, rates])
   const filters = [
     {
       label: 'All',

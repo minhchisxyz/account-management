@@ -1,5 +1,4 @@
 
-import "../globals.css";
 import {Suspense} from "react";
 import {NavLinksSkeleton} from "@/components/skeletons";
 import {YearNavigation} from "@/components/navigation";
