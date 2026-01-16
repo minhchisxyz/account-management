@@ -56,7 +56,7 @@ export default function CurrencyContentPage({rates}: {
   return (
       <div className={"flex flex-col items-center justify-start w-full max-h-screen py-4 px-4 md:px-10 gap-10"}>
         {/* top block: filters + graph */}
-        <div className={"w-full max-w-[80vw] mx-auto overflow-x-auto"}>
+        <div className={"w-full max-w-5xl mx-auto overflow-x-auto"}>
           <div className={"w-full flex flex-row flex-wrap md:flex-nowrap items-center justify-center p-2 gap-3 sm:gap-4 md:gap-6"}>
             {filters.map((f) => (
                 <button
