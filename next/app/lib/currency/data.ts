@@ -1,3 +1,4 @@
+'use server'
 
 import {CurrencyRate} from "../definitions";
 import prisma from "../prisma";
@@ -74,12 +75,12 @@ export async function fetchRate() {
   }
 }
 
-export async function fetchAllRates(filter?: string | null) {
+export async function fetchAllRates(filter?: string | number | null) {
   try {
     await getRate()
     if (filter) {
       console.log(`Fetching all rates in ${filter} days...`);
-      const days = parseInt(filter)
+      const days = typeof filter === 'number' ? filter : parseInt(filter)
       const date = new Date(new Date().getTime() - days * 24 * 60 * 60 * 1000)
       date.setUTCHours(0, 0, 0, 0)
       return await prisma.currencyExchangeRate.findMany({
